@@ -78,3 +78,75 @@ class OSRMRoutingProvider(RoutingProvider):
             raise RuntimeError(f"Unable to calculate driving route between {origin.name} and {destination.name}: {msg}")
 
         osrm_route = data["routes"][0]
+        distance_meters = float(osrm_route.get("distance", 0.0))
+        duration_seconds = float(osrm_route.get("duration", 0.0))
+        distance_miles = distance_meters * METERS_TO_MILES
+
+        # Decode geometry polyline
+        geom_encoded = osrm_route.get("geometry", "")
+        if geom_encoded:
+            coords = decode_polyline(geom_encoded, precision=5)
+        else:
+            coords = [[origin.latitude, origin.longitude], [destination.latitude, destination.longitude]]
+
+        # Parse turn-by-turn navigation steps
+        steps: List[RouteStep] = []
+        for osrm_leg in osrm_route.get("legs", []):
+            for step_item in osrm_leg.get("steps", []):
+                maneuver = step_item.get("maneuver", {})
+                m_type = maneuver.get("type", "")
+                m_modifier = maneuver.get("modifier", "")
+                step_name = step_item.get("name", "")
+                ref = step_item.get("ref", "")
+                step_dist_m = float(step_item.get("distance", 0.0))
+                step_dur_s = float(step_item.get("duration", 0.0))
+
+                display_name = f"{ref} ({step_name})" if (ref and step_name) else (ref or step_name or "Highway")
+
+                if m_type == "depart":
+                    instr = f"Depart on {display_name}"
+                elif m_type == "arrive":
+                    instr = f"Arrive at {destination.name}"
+                elif m_type in ("turn", "new name"):
+                    direction = f"{m_modifier} onto" if m_modifier else "onto"
+                    instr = f"Turn {direction} {display_name}"
+                elif m_type in ("merge", "on ramp"):
+                    instr = f"Take ramp onto {display_name}"
+                elif m_type in ("off ramp", "fork"):
+                    instr = f"Keep {m_modifier} towards {display_name}" if m_modifier else f"Take exit onto {display_name}"
+                else:
+                    instr = f"Continue on {display_name}"
+
+                loc = maneuver.get("location", [0.0, 0.0])
+                steps.append(RouteStep(
+                    instruction=instr,
+                    distance_miles=round(step_dist_m * METERS_TO_MILES, 2),
+                    duration_seconds=round(step_dur_s, 1),
+                    name=display_name,
+                    maneuver_type=f"{m_type}_{m_modifier}".strip("_"),
+                    latitude=float(loc[1]),
+                    longitude=float(loc[0]),
+                ))
+
+        route_leg = RouteLeg(
+            leg_id=leg_id,
+            origin=origin,
+            destination=destination,
+            distance_miles=distance_miles,
+            duration_seconds=duration_seconds,
+            steps=steps,
+            geometry_coords=coords,
+        )
+
+        _ROUTE_CACHE[cache_key] = route_leg
+        return route_leg
+
+
+_routing_provider: Optional[RoutingProvider] = None
+
+
+def get_routing_provider() -> RoutingProvider:
+    global _routing_provider
+    if _routing_provider is None:
+        _routing_provider = OSRMRoutingProvider()
+    return _routing_provider
