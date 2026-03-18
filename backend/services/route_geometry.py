@@ -88,3 +88,73 @@ def compute_cumulative_distances_miles(coords: List[List[float]]) -> List[float]
         return []
     cumulative = [0.0]
     total = 0.0
+    for i in range(1, len(coords)):
+        lat1, lon1 = coords[i - 1][0], coords[i - 1][1]
+        lat2, lon2 = coords[i][0], coords[i][1]
+        seg_dist = haversine_distance_miles(lat1, lon1, lat2, lon2)
+        total += seg_dist
+        cumulative.append(total)
+    return cumulative
+
+
+def interpolate_point_at_mile(
+    coords: List[List[float]],
+    cumulative_miles: List[float],
+    target_mile: float
+) -> Tuple[float, float]:
+    """
+    Interpolates a [lat, lng] along the polyline at target_mile from route start.
+    If target_mile <= 0, returns the first coordinate.
+    If target_mile >= total_miles, returns the last coordinate.
+    """
+    if not coords:
+        return (0.0, 0.0)
+    if len(coords) == 1 or target_mile <= 0.0:
+        return (coords[0][0], coords[0][1])
+
+    total_miles = cumulative_miles[-1]
+    if target_mile >= total_miles:
+        return (coords[-1][0], coords[-1][1])
+
+    # Binary search or scan for segment
+    for i in range(1, len(cumulative_miles)):
+        if cumulative_miles[i] >= target_mile:
+            m_prev = cumulative_miles[i - 1]
+            m_curr = cumulative_miles[i]
+            span = m_curr - m_prev
+            if span <= 1e-7:
+                return (coords[i][0], coords[i][1])
+
+            ratio = (target_mile - m_prev) / span
+            lat = coords[i - 1][0] + ratio * (coords[i][0] - coords[i - 1][0])
+            lng = coords[i - 1][1] + ratio * (coords[i][1] - coords[i - 1][1])
+            return (lat, lng)
+
+    return (coords[-1][0], coords[-1][1])
+
+
+def slice_geometry(
+    coords: List[List[float]],
+    cumulative_miles: List[float],
+    start_mile: float,
+    end_mile: float
+) -> List[List[float]]:
+    """
+    Extracts polyline coordinates between start_mile and end_mile,
+    including exact interpolated endpoints.
+    """
+    if not coords or start_mile >= end_mile:
+        return []
+
+    p_start = interpolate_point_at_mile(coords, cumulative_miles, start_mile)
+    p_end = interpolate_point_at_mile(coords, cumulative_miles, end_mile)
+
+    sliced: List[List[float]] = [[p_start[0], p_start[1]]]
+
+    for i in range(len(coords)):
+        m = cumulative_miles[i]
+        if start_mile < m < end_mile:
+            sliced.append(coords[i])
+
+    sliced.append([p_end[0], p_end[1]])
+    return sliced
