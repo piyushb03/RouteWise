@@ -68,3 +68,53 @@ class HOSEngine:
             current_route_mile=current_mile,
         )
 
+    def max_continuous_driving_allowed(self) -> float:
+        """
+        Determines the maximum number of driving hours the driver can legally perform right now
+        before an HOS limit (break, 11h driving, 14h window, or 70h cycle) is reached.
+        """
+        limit_11 = self.driving_remaining_in_window
+        limit_14 = self.window_remaining
+        limit_break = self.driving_until_break
+        limit_cycle = self.cycle_remaining
+
+        allowed = min(limit_11, limit_14, limit_break, limit_cycle)
+        return max(0.0, allowed)
+
+    def which_limit_binds(self) -> str:
+        """Identifies which HOS rule is currently the binding constraint for driving."""
+        limit_11 = self.driving_remaining_in_window
+        limit_14 = self.window_remaining
+        limit_break = self.driving_until_break
+        limit_cycle = self.cycle_remaining
+
+        min_val = min(limit_11, limit_14, limit_break, limit_cycle)
+        if min_val == limit_cycle:
+            return "CYCLE_70"
+        if min_val == limit_11:
+            return "DRIVING_11"
+        if min_val == limit_14:
+            return "WINDOW_14"
+        return "REST_30_BREAK"
+
+    def apply_driving(self, duration_hours: float) -> None:
+        """Apply driving time to clocks."""
+        if duration_hours <= 0:
+            return
+
+        self.window_active = True
+        self.consecutive_off_duty = 0.0
+
+        self.driving_in_window += duration_hours
+        self.window_elapsed += duration_hours
+        self.driving_since_break += duration_hours
+        self.cycle_used += duration_hours
+
+    def apply_on_duty_not_driving(self, duration_hours: float) -> None:
+        """
+        Apply On-Duty Not Driving activity (e.g. Pickup, Dropoff, Fueling).
+        Counts toward 14-hour window and 70-hour cycle.
+        If duration >= 0.5 hours (30 mins), it qualifies as a 30-minute break!
+        """
+        if duration_hours <= 0:
+            return
