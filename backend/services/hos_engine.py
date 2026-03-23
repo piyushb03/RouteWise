@@ -118,3 +118,52 @@ class HOSEngine:
         """
         if duration_hours <= 0:
             return
+
+        self.window_active = True
+        self.consecutive_off_duty = 0.0
+
+        self.window_elapsed += duration_hours
+        self.cycle_used += duration_hours
+
+        # 30-minute break can be satisfied by on-duty not driving
+        if duration_hours >= MANDATORY_DRIVING_BREAK_HOURS:
+            self.driving_since_break = 0.0
+
+    def apply_off_duty(self, duration_hours: float) -> None:
+        """
+        Apply Off-Duty or Sleeper Berth period.
+        Does NOT count toward cycle.
+        If >= 0.5 hours, satisfies 30-minute break.
+        If >= 10.0 hours, satisfies daily reset (resets 11h and 14h clocks).
+        If >= 34.0 hours, satisfies 34-hour cycle restart (resets cycle to 0 and daily clocks).
+        If < 10.0 hours, it does NOT pause or extend the 14-hour window if window is active!
+        """
+        if duration_hours <= 0:
+            return
+
+        self.consecutive_off_duty += duration_hours
+
+        # 34-Hour Restart check
+        if duration_hours >= CYCLE_RESTART_HOURS or self.consecutive_off_duty >= CYCLE_RESTART_HOURS:
+            self.cycle_used = 0.0
+            self.driving_in_window = 0.0
+            self.window_elapsed = 0.0
+            self.driving_since_break = 0.0
+            self.window_active = False
+            return
+
+        # 10-Hour Daily Reset check
+        if duration_hours >= DAILY_RESTART_HOURS or self.consecutive_off_duty >= DAILY_RESTART_HOURS:
+            self.driving_in_window = 0.0
+            self.window_elapsed = 0.0
+            self.driving_since_break = 0.0
+            self.window_active = False
+            return
+
+        # Consecutive 30-minute rest break check
+        if duration_hours >= MANDATORY_DRIVING_BREAK_HOURS:
+            self.driving_since_break = 0.0
+
+        # Short off-duty < 10 hours does NOT pause the 14-hour window
+        if self.window_active:
+            self.window_elapsed += duration_hours
