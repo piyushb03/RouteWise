@@ -198,3 +198,183 @@ class TripScheduler:
 
             # 5. Remaining driving needed for this leg
             hours_needed_for_leg = leg_miles_remaining / leg_speed_mph
+
+            # Determine the driving slice
+            drive_slice_hours = min(max_hos_drive_hours, max_fuel_drive_hours, hours_needed_for_leg)
+
+            # Safeguard against tiny numerical stalls
+            if drive_slice_hours < 0.01:
+                drive_slice_hours = 0.01
+
+            drive_slice_miles = drive_slice_hours * leg_speed_mph
+            if drive_slice_miles > leg_miles_remaining:
+                drive_slice_miles = leg_miles_remaining
+                drive_slice_hours = drive_slice_miles / leg_speed_mph
+
+            # Execute driving slice
+            seg_start_mile = self.current_trip_mile
+            seg_end_mile = self.current_trip_mile + drive_slice_miles
+            seg_start_time = self.current_time
+            seg_end_time = seg_start_time + timedelta(hours=drive_slice_hours)
+
+            start_lat, start_lng, _, _, start_loc_str = self._get_location_info_at_mile(seg_start_mile)
+            end_lat, end_lng, _, _, end_loc_str = self._get_location_info_at_mile(seg_end_mile)
+
+            driving_event = TimelineEvent(
+                event_id=f"event-{len(self.timeline) + 1}",
+                status=DutyStatus.DRIVING,
+                activity_type="DRIVING",
+                start_time=seg_start_time,
+                end_time=seg_end_time,
+                duration_hours=drive_slice_hours,
+                start_mile=seg_start_mile,
+                end_mile=seg_end_mile,
+                start_location=start_loc_str,
+                end_location=end_loc_str,
+                start_lat=start_lat,
+                start_lng=start_lng,
+                end_lat=end_lat,
+                end_lng=end_lng,
+                reason=f"Driving route ({leg_label})",
+                notes=f"Distance: {round(drive_slice_miles, 1)} mi at ~{round(leg_speed_mph, 1)} mph",
+            )
+            self.timeline.append(driving_event)
+
+            # Advance state
+            self.hos.apply_driving(drive_slice_hours)
+            self.current_time = seg_end_time
+            self.current_trip_mile = seg_end_mile
+            self.cumulative_miles_since_fuel += drive_slice_miles
+            leg_miles_remaining -= drive_slice_miles
+
+            # If leg is complete, we are done with driving loop for this leg
+            if leg_miles_remaining <= 0.01:
+                break
+
+            # If we didn't finish the leg, a stop is required! Determine what stop to insert:
+            # Check fuel first (or if fuel coincides with 30-min break)
+            needs_fuel = self.cumulative_miles_since_fuel >= (FUEL_INTERVAL_MILES - 1.0)
+            binding = self.hos.which_limit_binds()
+
+            if needs_fuel:
+                # 30-minute fuel stop satisfies both fueling and the 30-min break if needed
+                self._insert_fuel_stop(
+                    reason="Planned before 1,000 miles since the previous fuel stop.",
+                    satisfies_break=(self.hos.driving_until_break < 0.2),
+                )
+            elif binding == "REST_30_BREAK" or self.hos.driving_until_break < 0.05:
+                self._insert_30_min_break(reason="Required after 8 cumulative driving hours.")
+            elif binding in ("DRIVING_11", "WINDOW_14") or self.hos.driving_remaining_in_window < 0.05 or self.hos.window_remaining < 0.05:
+                self._insert_daily_reset(reason="Required to resume driving after 11-hour driving / 14-hour window limit.")
+            elif binding == "CYCLE_70" or self.hos.cycle_remaining < 0.1:
+                self._insert_cycle_restart(reason="Scheduled because remaining 70/8 cycle hours are insufficient.")
+            else:
+                # Defensive check: if window or break timer is low
+                self._insert_30_min_break(reason="Mandatory rest break before resuming route.")
+
+    def _handle_pickup_operation(self) -> None:
+        """1-hour on-duty pickup loading operation."""
+        # Check cycle and window capacity before doing 1h of on-duty work
+        if self.hos.cycle_remaining < PICKUP_DURATION_HOURS:
+            self._insert_cycle_restart(reason="34-hour restart required: insufficient cycle hours for pickup loading.")
+
+        if self.hos.window_remaining < PICKUP_DURATION_HOURS and self.hos.window_active:
+            # Prefer 10-hour rest if window is about to expire so driver has fresh window
+            self._insert_daily_reset(reason="10-hour off-duty reset scheduled before pickup to provide a fresh 14-hour window.")
+
+        start_time = self.current_time
+        end_time = start_time + timedelta(hours=PICKUP_DURATION_HOURS)
+
+        stop = Stop(
+            stop_id=f"stop-{self.stop_counter}",
+            type=StopType.PICKUP,
+            title=f"Pickup: {self.pickup_loc.name}",
+            reason="Shipper cargo loading (1.0 hr On-Duty Not Driving)",
+            latitude=self.pickup_loc.latitude,
+            longitude=self.pickup_loc.longitude,
+            route_mile=self.current_trip_mile,
+            start_time=start_time.isoformat(),
+            end_time=end_time.isoformat(),
+            duration_hours=PICKUP_DURATION_HOURS,
+            city=self.pickup_loc.city,
+            state=self.pickup_loc.state,
+            is_hos_required=True,
+            satisfies_break=True,  # 1 hour >= 30 min satisfies break
+            is_approximate=False,
+        )
+        self.stop_counter += 1
+        self.stops.append(stop)
+
+        event = TimelineEvent(
+            event_id=f"event-{len(self.timeline) + 1}",
+            status=DutyStatus.ON_DUTY_NOT_DRIVING,
+            activity_type="PICKUP",
+            start_time=start_time,
+            end_time=end_time,
+            duration_hours=PICKUP_DURATION_HOURS,
+            start_mile=self.current_trip_mile,
+            end_mile=self.current_trip_mile,
+            start_location=self.pickup_loc.name,
+            end_location=self.pickup_loc.name,
+            start_lat=self.pickup_loc.latitude,
+            start_lng=self.pickup_loc.longitude,
+            end_lat=self.pickup_loc.latitude,
+            end_lng=self.pickup_loc.longitude,
+            reason="Cargo pickup and loading at shipper",
+            notes="1 hour On Duty (Not Driving). Satisfies 30-minute rest break requirement.",
+        )
+        self.timeline.append(event)
+
+        # Apply to HOS (counts toward window and cycle, resets 30-min break)
+        self.hos.apply_on_duty_not_driving(PICKUP_DURATION_HOURS)
+        self.current_time = end_time
+
+    def _handle_dropoff_operation(self) -> None:
+        """1-hour on-duty dropoff unloading operation."""
+        if self.hos.cycle_remaining < DROPOFF_DURATION_HOURS:
+            self._insert_cycle_restart(reason="34-hour restart required: insufficient cycle hours for dropoff unloading.")
+
+        start_time = self.current_time
+        end_time = start_time + timedelta(hours=DROPOFF_DURATION_HOURS)
+
+        stop = Stop(
+            stop_id=f"stop-{self.stop_counter}",
+            type=StopType.DROPOFF,
+            title=f"Dropoff: {self.dropoff_loc.name}",
+            reason="Receiver cargo unloading (1.0 hr On-Duty Not Driving)",
+            latitude=self.dropoff_loc.latitude,
+            longitude=self.dropoff_loc.longitude,
+            route_mile=self.current_trip_mile,
+            start_time=start_time.isoformat(),
+            end_time=end_time.isoformat(),
+            duration_hours=DROPOFF_DURATION_HOURS,
+            city=self.dropoff_loc.city,
+            state=self.dropoff_loc.state,
+            is_hos_required=True,
+            satisfies_break=True,
+            is_approximate=False,
+        )
+        self.stop_counter += 1
+        self.stops.append(stop)
+
+        event = TimelineEvent(
+            event_id=f"event-{len(self.timeline) + 1}",
+            status=DutyStatus.ON_DUTY_NOT_DRIVING,
+            activity_type="DROPOFF",
+            start_time=start_time,
+            end_time=end_time,
+            duration_hours=DROPOFF_DURATION_HOURS,
+            start_mile=self.current_trip_mile,
+            end_mile=self.current_trip_mile,
+            start_location=self.dropoff_loc.name,
+            end_location=self.dropoff_loc.name,
+            start_lat=self.dropoff_loc.latitude,
+            start_lng=self.dropoff_loc.longitude,
+            end_lat=self.dropoff_loc.latitude,
+            end_lng=self.dropoff_loc.longitude,
+            reason="Cargo dropoff and unloading at consignee",
+            notes="1 hour On Duty (Not Driving).",
+        )
+        self.timeline.append(event)
+
+        self.hos.apply_on_duty_not_driving(DROPOFF_DURATION_HOURS)
