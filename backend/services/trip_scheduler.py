@@ -378,3 +378,204 @@ class TripScheduler:
         self.timeline.append(event)
 
         self.hos.apply_on_duty_not_driving(DROPOFF_DURATION_HOURS)
+        self.current_time = end_time
+
+    def _insert_30_min_break(self, reason: str) -> None:
+        """Insert 30-minute off-duty rest break."""
+        lat, lng, city, state, loc_str = self._get_location_info_at_mile(self.current_trip_mile)
+        start_time = self.current_time
+        end_time = start_time + timedelta(hours=MANDATORY_DRIVING_BREAK_HOURS)
+
+        stop = Stop(
+            stop_id=f"stop-{self.stop_counter}",
+            type=StopType.REST_30,
+            title="30-Minute Rest Break",
+            reason=reason,
+            latitude=lat,
+            longitude=lng,
+            route_mile=self.current_trip_mile,
+            start_time=start_time.isoformat(),
+            end_time=end_time.isoformat(),
+            duration_hours=MANDATORY_DRIVING_BREAK_HOURS,
+            city=city,
+            state=state,
+            is_hos_required=True,
+            satisfies_break=True,
+            is_approximate=True,
+        )
+        self.stop_counter += 1
+        self.stops.append(stop)
+
+        event = TimelineEvent(
+            event_id=f"event-{len(self.timeline) + 1}",
+            status=DutyStatus.OFF_DUTY,
+            activity_type="REST_30",
+            start_time=start_time,
+            end_time=end_time,
+            duration_hours=MANDATORY_DRIVING_BREAK_HOURS,
+            start_mile=self.current_trip_mile,
+            end_mile=self.current_trip_mile,
+            start_location=loc_str,
+            end_location=loc_str,
+            start_lat=lat,
+            start_lng=lng,
+            end_lat=lat,
+            end_lng=lng,
+            reason=reason,
+            notes="Off Duty break. Resets 8-hour cumulative driving limit. Does not pause 14-hour window.",
+        )
+        self.timeline.append(event)
+
+        self.hos.apply_off_duty(MANDATORY_DRIVING_BREAK_HOURS)
+        self.current_time = end_time
+
+    def _insert_daily_reset(self, reason: str) -> None:
+        """Insert 10-hour consecutive off-duty rest period."""
+        lat, lng, city, state, loc_str = self._get_location_info_at_mile(self.current_trip_mile)
+        start_time = self.current_time
+        end_time = start_time + timedelta(hours=DAILY_RESTART_HOURS)
+
+        stop = Stop(
+            stop_id=f"stop-{self.stop_counter}",
+            type=StopType.REST_10,
+            title="10-Hour Off-Duty Reset",
+            reason=reason,
+            latitude=lat,
+            longitude=lng,
+            route_mile=self.current_trip_mile,
+            start_time=start_time.isoformat(),
+            end_time=end_time.isoformat(),
+            duration_hours=DAILY_RESTART_HOURS,
+            city=city,
+            state=state,
+            is_hos_required=True,
+            satisfies_daily_reset=True,
+            satisfies_break=True,
+            is_approximate=True,
+        )
+        self.stop_counter += 1
+        self.stops.append(stop)
+
+        event = TimelineEvent(
+            event_id=f"event-{len(self.timeline) + 1}",
+            status=DutyStatus.OFF_DUTY,
+            activity_type="REST_10",
+            start_time=start_time,
+            end_time=end_time,
+            duration_hours=DAILY_RESTART_HOURS,
+            start_mile=self.current_trip_mile,
+            end_mile=self.current_trip_mile,
+            start_location=loc_str,
+            end_location=loc_str,
+            start_lat=lat,
+            start_lng=lng,
+            end_lat=lat,
+            end_lng=lng,
+            reason=reason,
+            notes="10 consecutive hours Off Duty. Resets 11-hour driving and 14-hour window clocks.",
+        )
+        self.timeline.append(event)
+
+        self.hos.apply_off_duty(DAILY_RESTART_HOURS)
+        self.current_time = end_time
+
+    def _insert_cycle_restart(self, reason: str) -> None:
+        """Insert 34-hour consecutive off-duty cycle restart."""
+        lat, lng, city, state, loc_str = self._get_location_info_at_mile(self.current_trip_mile)
+        start_time = self.current_time
+        end_time = start_time + timedelta(hours=CYCLE_RESTART_HOURS)
+
+        stop = Stop(
+            stop_id=f"stop-{self.stop_counter}",
+            type=StopType.RESTART_34,
+            title="34-Hour Cycle Restart",
+            reason=reason,
+            latitude=lat,
+            longitude=lng,
+            route_mile=self.current_trip_mile,
+            start_time=start_time.isoformat(),
+            end_time=end_time.isoformat(),
+            duration_hours=CYCLE_RESTART_HOURS,
+            city=city,
+            state=state,
+            is_hos_required=True,
+            satisfies_cycle_restart=True,
+            satisfies_daily_reset=True,
+            satisfies_break=True,
+            is_approximate=True,
+        )
+        self.stop_counter += 1
+        self.stops.append(stop)
+
+        event = TimelineEvent(
+            event_id=f"event-{len(self.timeline) + 1}",
+            status=DutyStatus.OFF_DUTY,
+            activity_type="RESTART_34",
+            start_time=start_time,
+            end_time=end_time,
+            duration_hours=CYCLE_RESTART_HOURS,
+            start_mile=self.current_trip_mile,
+            end_mile=self.current_trip_mile,
+            start_location=loc_str,
+            end_location=loc_str,
+            start_lat=lat,
+            start_lng=lng,
+            end_lat=lat,
+            end_lng=lng,
+            reason=reason,
+            notes="34 consecutive hours Off Duty. Resets 70/8 cycle to 0 hours used.",
+        )
+        self.timeline.append(event)
+
+        self.hos.apply_off_duty(CYCLE_RESTART_HOURS)
+        self.current_time = end_time
+
+    def _insert_fuel_stop(self, reason: str, satisfies_break: bool = True) -> None:
+        """Insert 30-minute on-duty fuel stop."""
+        lat, lng, city, state, loc_str = self._get_location_info_at_mile(self.current_trip_mile)
+        start_time = self.current_time
+        end_time = start_time + timedelta(hours=DEFAULT_FUEL_DURATION_HOURS)
+
+        stop = Stop(
+            stop_id=f"stop-{self.stop_counter}",
+            type=StopType.FUEL,
+            title="Planned Fuel Stop",
+            reason=reason,
+            latitude=lat,
+            longitude=lng,
+            route_mile=self.current_trip_mile,
+            start_time=start_time.isoformat(),
+            end_time=end_time.isoformat(),
+            duration_hours=DEFAULT_FUEL_DURATION_HOURS,
+            city=city,
+            state=state,
+            is_hos_required=True,
+            satisfies_break=satisfies_break,
+            is_approximate=True,
+        )
+        self.stop_counter += 1
+        self.stops.append(stop)
+
+        event = TimelineEvent(
+            event_id=f"event-{len(self.timeline) + 1}",
+            status=DutyStatus.ON_DUTY_NOT_DRIVING,
+            activity_type="FUEL",
+            start_time=start_time,
+            end_time=end_time,
+            duration_hours=DEFAULT_FUEL_DURATION_HOURS,
+            start_mile=self.current_trip_mile,
+            end_mile=self.current_trip_mile,
+            start_location=loc_str,
+            end_location=loc_str,
+            start_lat=lat,
+            start_lng=lng,
+            end_lat=lat,
+            end_lng=lng,
+            reason=reason,
+            notes=f"Refueling stop ({round(DEFAULT_FUEL_DURATION_HOURS * 60)} min On Duty). Resets 1,000-mile fuel interval.",
+        )
+        self.timeline.append(event)
+
+        self.hos.apply_on_duty_not_driving(DEFAULT_FUEL_DURATION_HOURS)
+        self.current_time = end_time
+        self.cumulative_miles_since_fuel = 0.0
