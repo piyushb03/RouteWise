@@ -148,3 +148,77 @@ export const RouteMap: React.FC<RouteMapProps> = ({ route, stops }) => {
           <FitBounds coordinates={coordinates} />
 
           {/* Route Polyline */}
+          {coordinates.length > 0 && (
+            <>
+              {/* Outer stroke */}
+              <Polyline
+                positions={coordinates}
+                pathOptions={{
+                  color: resolvedTheme === 'dark' ? '#0369a1' : '#0284c7',
+                  weight: 6,
+                  opacity: 0.6
+                }}
+              />
+              {/* Crisp inner line */}
+              <Polyline
+                positions={coordinates}
+                pathOptions={{
+                  color: resolvedTheme === 'dark' ? '#38bdf8' : '#0284c7',
+                  weight: 3.5,
+                  opacity: 1.0
+                }}
+              />
+            </>
+          )}
+
+          {/* Stops Markers */}
+          {stops.map((stop) => (
+            <Marker
+              key={stop.stop_id}
+              position={[stop.latitude, stop.longitude]}
+              icon={createMarkerIcon(stop.type)}
+            >
+              <Popup className="custom-popup">
+                <div className="p-1 space-y-1.5 min-w-[220px] text-slate-900">
+                  <div className="flex items-center justify-between border-b pb-1">
+                    <span className="font-bold text-xs uppercase text-slate-800">{stop.title}</span>
+                    <span className="text-[10px] font-mono bg-slate-100 px-1.5 py-0.5 rounded font-semibold text-slate-600">
+                      Mile {stop.route_mile.toFixed(1)}
+                    </span>
+                  </div>
+
+                  <p className="text-xs text-slate-600">{stop.city && stop.state ? `${stop.city}, ${stop.state}` : 'En route'}</p>
+
+                  <div className="text-[11px] space-y-1 bg-slate-50 p-2 rounded border border-slate-200">
+                    <div className="flex justify-between">
+                      <span className="text-slate-500">Duration:</span>
+                      <span className="font-semibold text-slate-800">
+                        {stop.duration_hours > 0 ? `${stop.duration_hours.toFixed(1)} hr` : 'Departure'}
+                      </span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-slate-500">Time:</span>
+                      <span className="font-mono text-slate-700">
+                        {new Date(stop.start_time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      </span>
+                    </div>
+                  </div>
+
+                  <p className="text-[11px] text-slate-600 leading-snug">
+                    <span className="font-semibold">Reason:</span> {stop.reason}
+                  </p>
+
+                  {stop.is_approximate && (
+                    <span className="text-[10px] italic text-amber-700 block">
+                      *Planned stop location — approximate.
+                    </span>
+                  )}
+                </div>
+              </Popup>
+            </Marker>
+          ))}
+        </MapContainer>
+      </div>
+    </section>
+  );
+};
