@@ -118,3 +118,132 @@ export const App: React.FC = () => {
                     <span className="text-sky-700 dark:text-sky-400 font-black">
                       FMCSA ELD Daily Log
                     </span>{' '}
+                    Automation
+                  </h1>
+                  <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 leading-relaxed max-w-2xl font-normal">
+                    RouteWise plans property-carrying truck trips, enforces mandatory 30-minute rest breaks after 8 hours of driving, schedules 10-hour off-duty resets at 11h/14h limits, inserts fuel stops every ≤1,000 miles, and renders official 24.0-hour vector SVG driver daily log sheets with continuous duty status graphing.
+                  </p>
+                </div>
+
+                {/* Quick Call to Action / Scroll Trigger */}
+                <div className="lg:col-span-4 flex lg:justify-end">
+                  <button
+                    type="button"
+                    onClick={() => handleScrollTo('planner-form-section')}
+                    className="inline-flex items-center space-x-2 px-5 py-3 rounded-xl bg-slate-900 dark:bg-sky-600 text-white font-semibold text-xs tracking-wide shadow-soft-sm dark:shadow-dark-sm hover:bg-slate-800 dark:hover:bg-sky-500 transition active:scale-95"
+                  >
+                    <span>Configure Trip Waypoints</span>
+                    <ArrowDown className="w-4 h-4 animate-bounce" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Logistics Telemetry Pillars */}
+              <div className="pt-6 border-t border-slate-100 dark:border-slate-800/80 grid grid-cols-2 md:grid-cols-4 gap-4 text-xs">
+                <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/60 space-y-1">
+                  <div className="flex items-center space-x-1.5 text-slate-500 dark:text-slate-400 font-medium">
+                    <Clock className="w-3.5 h-3.5 text-sky-600 dark:text-sky-400" />
+                    <span>11h Driving Window</span>
+                  </div>
+                  <div className="font-semibold text-slate-800 dark:text-slate-200">
+                    Max 11.0h net movement per shift
+                  </div>
+                </div>
+
+                <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/60 space-y-1">
+                  <div className="flex items-center space-x-1.5 text-slate-500 dark:text-slate-400 font-medium">
+                    <Clock className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
+                    <span>14h Duty Window</span>
+                  </div>
+                  <div className="font-semibold text-slate-800 dark:text-slate-200">
+                    Consecutive span before 10h reset
+                  </div>
+                </div>
+
+                <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/60 space-y-1">
+                  <div className="flex items-center space-x-1.5 text-slate-500 dark:text-slate-400 font-medium">
+                    <Fuel className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+                    <span>Fueling Rules</span>
+                  </div>
+                  <div className="font-semibold text-slate-800 dark:text-slate-200">
+                    Mandatory stop every ≤1,000 mi
+                  </div>
+                </div>
+
+                <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/60 space-y-1">
+                  <div className="flex items-center space-x-1.5 text-slate-500 dark:text-slate-400 font-medium">
+                    <FileSpreadsheet className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
+                    <span>Vector Daily Logs</span>
+                  </div>
+                  <div className="font-semibold text-slate-800 dark:text-slate-200">
+                    24.0h partitioned SVG sheets
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Input Form Section */}
+        <TripPlannerForm onPlanTrip={handlePlanTrip} isLoading={isLoading} />
+
+        {/* Loading Overlay / Progress Indicator */}
+        {isLoading && (
+          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-8 text-center space-y-4 max-w-xl mx-auto shadow-soft-md dark:shadow-dark-md animate-fade-in transition-colors">
+            <Loader2 className="w-8 h-8 text-slate-900 dark:text-sky-400 animate-spin mx-auto" />
+            <div className="space-y-1">
+              <h3 className="text-base font-bold text-slate-900 dark:text-white">
+                Calculating Route Geometry & HOS Timeline
+              </h3>
+              <p className="text-xs font-mono text-slate-600 dark:text-sky-300 font-medium">
+                {loadingStep}
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Error Banner */}
+        {errorMessage && (
+          <div className="bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/60 rounded-xl p-5 max-w-3xl mx-auto flex items-start space-x-3 text-xs text-rose-800 dark:text-rose-200 shadow-2xs">
+            <AlertCircle className="w-5 h-5 text-rose-600 dark:text-rose-400 shrink-0 mt-0.5" />
+            <div className="space-y-1">
+              <h4 className="font-bold text-rose-900 dark:text-rose-300 text-sm">Trip Planning Notice</h4>
+              <p>{errorMessage}</p>
+            </div>
+          </div>
+        )}
+
+        {/* Results Sections (Rendered when planResult is available) */}
+        {planResult && !isLoading && (
+          <div className="space-y-10 animate-fade-in">
+            {/* 1. HOS Summary Dashboard */}
+            <HOSDashboard trip={planResult.trip} hos={planResult.hos_summary} />
+
+            {/* 2. Interactive Route Map */}
+            <RouteMap route={planResult.route} stops={planResult.stops} />
+
+            {/* 3. Daily Log Sheets (Plotted SVG Graph) */}
+            <DailyLogViewer logs={planResult.daily_logs} />
+
+            {/* 4. Sequential Trip Timeline */}
+            <TripTimeline timeline={planResult.timeline} />
+
+            {/* 5. Turn-by-Turn Driving Route Instructions */}
+            <RouteInstructions steps={planResult.route.instructions} />
+
+            {/* 6. Compliance Audit & Regulatory Rationale */}
+            <CompliancePanel
+              validation={planResult.validation}
+              stops={planResult.stops}
+              assumptions={planResult.assumptions}
+              disclaimer={planResult.disclaimer}
+            />
+          </div>
+        )}
+      </main>
+
+      {/* Footer */}
+      <Footer />
+    </div>
+  );
+};
