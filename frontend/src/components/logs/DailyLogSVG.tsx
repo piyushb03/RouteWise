@@ -16,15 +16,15 @@ export const DailyLogSVG: React.FC<DailyLogSVGProps> = ({ log }) => {
 
   // SVG Grid coordinate geometry
   const svgWidth = 980;
-  const svgHeight = 720;
+  const svgHeight = 670;
 
   const gridLeft = 140;
   const gridRight = 890;
   const gridWidth = gridRight - gridLeft; // 750px for 24 hours -> 31.25px per hour
-  const gridTop = 165;
+  const gridTop = 192;
   const rowHeight = 24;
   const numRows = 4;
-  const gridBottom = gridTop + numRows * rowHeight; // 165 + 96 = 261
+  const gridBottom = gridTop + numRows * rowHeight; // 192 + 96 = 288
 
   // Row Y center coordinates for the 4 duty status rows
   // 1: Off Duty, 2: Sleeper Berth, 3: Driving, 4: On Duty (not driving)
@@ -112,55 +112,55 @@ export const DailyLogSVG: React.FC<DailyLogSVGProps> = ({ log }) => {
         </text>
 
         {/* From & To */}
-        <text x="25" y="70" fontSize="12" fontWeight="bold" fill="#000000">From:</text>
-        <text x="70" y="70" fontSize="12" fontWeight="600" fill="#000000">{log.from_location || 'Not provided'}</text>
-        <line x1="68" y1="74" x2="440" y2="74" stroke="#000000" strokeWidth="1" />
+        <text x="25" y="68" fontSize="12" fontWeight="bold" fill="#000000">From:</text>
+        <text x="70" y="68" fontSize="12" fontWeight="600" fill="#000000">{log.from_location || 'Not provided'}</text>
+        <line x1="68" y1="72" x2="440" y2="72" stroke="#000000" strokeWidth="1" />
 
-        <text x="490" y="70" fontSize="12" fontWeight="bold" fill="#000000">To:</text>
-        <text x="520" y="70" fontSize="12" fontWeight="600" fill="#000000">{log.to_location || 'Not provided'}</text>
-        <line x1="518" y1="74" x2="955" y2="74" stroke="#000000" strokeWidth="1" />
+        <text x="490" y="68" fontSize="12" fontWeight="bold" fill="#000000">To:</text>
+        <text x="520" y="68" fontSize="12" fontWeight="600" fill="#000000">{log.to_location || 'Not provided'}</text>
+        <line x1="518" y1="72" x2="955" y2="72" stroke="#000000" strokeWidth="1" />
 
         {/* ================= METADATA BOXES ================= */}
         {/* Box: Total Miles Driving Today */}
-        <rect x="25" y="86" width="135" height="26" fill="#fcfcfc" stroke="#000000" strokeWidth="1" />
-        <text x="92" y="103" fontSize="12" fontWeight="bold" textAnchor="middle" fill="#000000">
+        <rect x="25" y="82" width="135" height="24" fill="#fcfcfc" stroke="#000000" strokeWidth="1" />
+        <text x="92" y="98" fontSize="12" fontWeight="bold" textAnchor="middle" fill="#000000">
           {log.miles_driving_today.toFixed(1)}
         </text>
-        <text x="92" y="122" fontSize="8" textAnchor="middle" fill="#333333">Total Miles Driving Today</text>
+        <text x="92" y="116" fontSize="7.5" textAnchor="middle" fill="#333333">Total Miles Driving Today</text>
 
         {/* Box: Total Mileage Today */}
-        <rect x="175" y="86" width="135" height="26" fill="#fcfcfc" stroke="#000000" strokeWidth="1" />
-        <text x="242" y="103" fontSize="12" fontWeight="bold" textAnchor="middle" fill="#000000">
+        <rect x="175" y="82" width="135" height="24" fill="#fcfcfc" stroke="#000000" strokeWidth="1" />
+        <text x="242" y="98" fontSize="12" fontWeight="bold" textAnchor="middle" fill="#000000">
           {log.total_mileage_today ? log.total_mileage_today.toFixed(1) : '—'}
         </text>
-        <text x="242" y="122" fontSize="8" textAnchor="middle" fill="#333333">Total Mileage Today</text>
+        <text x="242" y="116" fontSize="7.5" textAnchor="middle" fill="#333333">Total Mileage Today</text>
 
         {/* Line: Name of Carrier */}
-        <text x="440" y="100" fontSize="10" fontWeight="bold" fill="#000000">Name of Carrier:</text>
-        <text x="540" y="100" fontSize="11" fontWeight="600" fill="#000000">{log.carrier_name || 'Not provided'}</text>
-        <line x1="440" y1="104" x2="955" y2="104" stroke="#000000" strokeWidth="0.75" />
+        <text x="440" y="94" fontSize="10" fontWeight="bold" fill="#000000">Name of Carrier:</text>
+        <text x="540" y="94" fontSize="11" fontWeight="600" fill="#000000">{log.carrier_name || 'Not provided'}</text>
+        <line x1="440" y1="98" x2="955" y2="98" stroke="#000000" strokeWidth="0.75" />
 
         {/* Box: Truck / Tractor Numbers */}
-        <rect x="25" y="126" width="285" height="24" fill="#fcfcfc" stroke="#000000" strokeWidth="1" />
-        <text x="167" y="142" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#000000">
+        <rect x="25" y="122" width="285" height="24" fill="#fcfcfc" stroke="#000000" strokeWidth="1" />
+        <text x="167" y="138" fontSize="11" fontWeight="bold" textAnchor="middle" fill="#000000">
           {log.truck_number ? `Truck: ${log.truck_number}` : ''} {log.trailer_number ? `• Trailer: ${log.trailer_number}` : ''}
         </text>
-        <text x="167" y="157" fontSize="7.5" textAnchor="middle" fill="#333333">
+        <text x="167" y="155" fontSize="7" textAnchor="middle" fill="#333333">
           Truck/Tractor and Trailer Numbers or License Plate(s)/State (show each unit)
         </text>
 
         {/* Line: Main Office Address */}
-        <text x="440" y="123" fontSize="10" fontWeight="bold" fill="#000000">Main Office Address:</text>
-        <text x="560" y="123" fontSize="10" fill="#222222">{log.main_office_address || 'Not provided'}</text>
-        <line x1="440" y1="126" x2="955" y2="126" stroke="#000000" strokeWidth="0.75" />
+        <text x="440" y="118" fontSize="10" fontWeight="bold" fill="#000000">Main Office Address:</text>
+        <text x="560" y="118" fontSize="10" fill="#222222">{log.main_office_address || 'Not provided'}</text>
+        <line x1="440" y1="122" x2="955" y2="122" stroke="#000000" strokeWidth="0.75" />
 
         {/* Line: Home Terminal Address */}
-        <text x="440" y="145" fontSize="10" fontWeight="bold" fill="#000000">Home Terminal Address:</text>
-        <text x="575" y="145" fontSize="10" fill="#222222">{log.home_terminal_address || 'Not provided'}</text>
-        <line x1="440" y1="148" x2="955" y2="148" stroke="#000000" strokeWidth="0.75" />
+        <text x="440" y="142" fontSize="10" fontWeight="bold" fill="#000000">Home Terminal Address:</text>
+        <text x="575" y="142" fontSize="10" fill="#222222">{log.home_terminal_address || 'Not provided'}</text>
+        <line x1="440" y1="146" x2="955" y2="146" stroke="#000000" strokeWidth="0.75" />
 
         {/* ================= 24-HOUR GRID ================= */}
-        {/* Black Header Banner */}
+        {/* Black Header Banner (Starts at y = 170, safely below Home Terminal Address at y = 146) */}
         <rect x={gridLeft} y={gridTop - 22} width={gridWidth} height="22" fill="#000000" />
         <rect x={gridRight + 5} y={gridTop - 22} width="60" height="22" fill="#000000" />
         <text x={gridRight + 35} y={gridTop - 8} fontSize="9" fontWeight="bold" fill="#ffffff" textAnchor="middle">
@@ -323,7 +323,7 @@ export const DailyLogSVG: React.FC<DailyLogSVGProps> = ({ log }) => {
 
         {/* ================= LOWER SECTION: REMARKS & SHIPPING ================= */}
         {/* Shipping Documents (Left Column) */}
-        <g transform="translate(25, 275)">
+        <g transform="translate(25, 316)">
           <text x="0" y="20" fontSize="13" fontWeight="bold" fill="#000000">
             Shipping Documents:
           </text>
@@ -346,7 +346,7 @@ export const DailyLogSVG: React.FC<DailyLogSVGProps> = ({ log }) => {
         </g>
 
         {/* Remarks Section (Right Column) */}
-        <g transform="translate(205, 275)">
+        <g transform="translate(205, 316)">
           <text x="0" y="20" fontSize="14" fontWeight="bold" fill="#000000">
             Remarks
           </text>
@@ -371,7 +371,7 @@ export const DailyLogSVG: React.FC<DailyLogSVGProps> = ({ log }) => {
         </g>
 
         {/* ================= RECAP SECTION (70 Hour / 8 Day) ================= */}
-        <g transform="translate(25, 475)">
+        <g transform="translate(25, 510)">
           {/* Top border */}
           <line x1="0" y1="0" x2="930" y2="0" stroke="#000000" strokeWidth="1" />
 
@@ -433,29 +433,29 @@ export const DailyLogSVG: React.FC<DailyLogSVGProps> = ({ log }) => {
             </text>
           )}
 
-          {/* Signature Line */}
-          <g transform="translate(620, 100)">
-            <text x="0" y="0" fontSize="10" fontWeight="bold" fill="#000000">
+          {/* Signature Line: Clean handwritten style without '(Typed: ...)' prefix */}
+          <g transform="translate(580, 105)">
+            <text x="0" y="0" fontSize="10.5" fontWeight="bold" fill="#000000">
               Driver&apos;s Signature:
             </text>
-            <text x="120" y="0" fontSize="11" fontStyle="italic" fill="#000000">
-              {typedSignature ? `(Typed: ${typedSignature})` : ''}
+            <text x="125" y="-2" fontSize="14" fontStyle="italic" fontWeight="600" fontFamily="Georgia, 'Times New Roman', serif" fill="#000000">
+              {typedSignature || ''}
             </text>
-            <line x1="110" y1="4" x2="310" y2="4" stroke="#000000" strokeWidth="1" />
+            <line x1="115" y1="4" x2="330" y2="4" stroke="#000000" strokeWidth="1" />
           </g>
         </g>
       </svg>
 
-      {/* Interactive typed signature control below SVG in browser view */}
-      <div className="no-print mt-3 pt-3 border-t border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between text-xs text-slate-500 gap-2">
+      {/* Interactive signature control below SVG in browser view */}
+      <div className="no-print mt-3 pt-3 border-t border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row items-start sm:items-center justify-between text-xs text-slate-500 dark:text-slate-400 gap-2">
         <div className="flex items-center space-x-2">
-          <span>Sign Log (Type Name):</span>
+          <span className="font-semibold text-slate-700 dark:text-slate-300">Driver Signature:</span>
           <input
             type="text"
-            placeholder="Type driver full name"
+            placeholder="Driver full name"
             value={typedSignature}
             onChange={(e) => setTypedSignature(e.target.value)}
-            className="px-2.5 py-1 border border-slate-300 rounded text-xs text-black focus:outline-none focus:ring-1 focus:ring-sky-500"
+            className="px-2.5 py-1 border border-slate-300 dark:border-slate-600 rounded text-xs text-black dark:text-white bg-white dark:bg-slate-800 focus:outline-none focus:ring-1 focus:ring-sky-500 font-medium"
           />
         </div>
         <span className="text-[11px] text-slate-400">

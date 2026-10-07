@@ -11,7 +11,7 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
-const THEME_STORAGE_KEY = 'routewise-ui-theme';
+const THEME_STORAGE_KEY = 'routewise-theme-mode';
 
 /**
  * Synchronously update documentElement and body classes, data attributes, and color scheme.
@@ -45,6 +45,8 @@ export const applyThemeToDOM = (theme: Theme) => {
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [theme, setThemeState] = useState<Theme>(() => {
     try {
+      // Clear legacy storage key from prior sessions
+      localStorage.removeItem('routewise-ui-theme');
       const saved = localStorage.getItem(THEME_STORAGE_KEY);
       if (saved === 'dark') {
         applyThemeToDOM('dark');
@@ -53,7 +55,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     } catch {
       // Ignore localStorage errors
     }
-    // Default to light theme
+    // Strict default to light theme
     applyThemeToDOM('light');
     return 'light';
   });

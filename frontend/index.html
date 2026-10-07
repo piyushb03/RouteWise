@@ -16,7 +16,11 @@
     <script>
       (function() {
         try {
-          var saved = localStorage.getItem('routewise-ui-theme');
+          // Purge legacy storage key from old sessions
+          if (localStorage.getItem('routewise-ui-theme')) {
+            localStorage.removeItem('routewise-ui-theme');
+          }
+          var saved = localStorage.getItem('routewise-theme-mode');
           var isDark = saved === 'dark';
           var root = document.documentElement;
           if (isDark) {
@@ -30,7 +34,7 @@
             root.setAttribute('data-theme', 'light');
             root.style.colorScheme = 'light';
             if (saved !== 'light') {
-              localStorage.setItem('routewise-ui-theme', 'light');
+              localStorage.setItem('routewise-theme-mode', 'light');
             }
           }
         } catch (e) {
