@@ -8,7 +8,7 @@ interface LocationInputProps {
   label: string;
   value: Location | null;
   onChange: (loc: Location | null) => void;
-  placeholder: string;
+  placeholder?: string;
   required?: boolean;
 }
 
@@ -17,28 +17,30 @@ export const LocationInput: React.FC<LocationInputProps> = ({
   label,
   value,
   onChange,
-  placeholder,
+  placeholder = 'Search city, state, or address...',
   required = true,
 }) => {
   const [inputText, setInputText] = useState(value ? value.name : '');
   const [suggestions, setSuggestions] = useState<Location[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedIndex, setSelectedIndex] = useState<number>(-1);
+  const [selectedIndex, setSelectedIndex] = useState(-1);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Sync internal text if value changes externally (e.g. preset applied)
   useEffect(() => {
     if (value) {
       setInputText(value.name);
+      setErrorMsg(null);
     } else {
       setInputText('');
     }
   }, [value]);
 
-  // Click outside listener to dismiss suggestions
+  // Handle outside click to dismiss autocomplete popup
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
@@ -54,47 +56,51 @@ export const LocationInput: React.FC<LocationInputProps> = ({
     setErrorMsg(null);
     setSelectedIndex(-1);
 
-    if (value && value.name !== text) {
-      onChange(null);
+    if (value && text !== value.name) {
+      onChange(null); // invalidate until selected
     }
 
     if (debounceTimerRef.current) {
       clearTimeout(debounceTimerRef.current);
     }
 
-    const trimmed = text.trim();
-    if (trimmed.length < 2) {
+    if (!text.trim() || text.length < 2) {
       setSuggestions([]);
       setIsOpen(false);
+      setIsLoading(false);
       return;
     }
 
     setIsLoading(true);
     debounceTimerRef.current = setTimeout(async () => {
       try {
-        const results = await geocodeLocation(trimmed);
+        const results = await geocodeLocation(text.trim());
         setSuggestions(results);
         setIsOpen(results.length > 0);
-      } catch (err: any) {
-        setErrorMsg('Search failed. Check network or try typing city name.');
+        if (results.length === 0) {
+          setErrorMsg('No US highway locations found for this query.');
+        }
+      } catch (err) {
+        console.error('Geocoding search failed:', err);
+        setErrorMsg('Failed to fetch location suggestions.');
         setSuggestions([]);
       } finally {
         setIsLoading(false);
       }
-    }, 350);
+    }, 280);
   };
 
   const handleSelectLocation = (loc: Location) => {
-    onChange(loc);
     setInputText(loc.name);
-    setSuggestions([]);
+    onChange(loc);
     setIsOpen(false);
     setErrorMsg(null);
+    setSuggestions([]);
   };
 
   const handleClear = () => {
-    onChange(null);
     setInputText('');
+    onChange(null);
     setSuggestions([]);
     setIsOpen(false);
     setErrorMsg(null);
@@ -105,10 +111,10 @@ export const LocationInput: React.FC<LocationInputProps> = ({
 
     if (e.key === 'ArrowDown') {
       e.preventDefault();
-      setSelectedIndex((prev) => (prev < suggestions.length - 1 ? prev + 1 : 0));
+      setSelectedIndex((prev) => (prev < suggestions.length - 1 ? prev + 1 : prev));
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
-      setSelectedIndex((prev) => (prev > 0 ? prev - 1 : suggestions.length - 1));
+      setSelectedIndex((prev) => (prev > 0 ? prev - 1 : prev));
     } else if (e.key === 'Enter') {
       e.preventDefault();
       if (selectedIndex >= 0 && selectedIndex < suggestions.length) {
@@ -149,37 +155,37 @@ export const LocationInput: React.FC<LocationInputProps> = ({
           }}
           placeholder={placeholder}
           autoComplete="off"
-          className={`w-full pl-9 pr-10 py-2.5 bg-white border rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none transition shadow-2xs ${
+          className={`w-full pl-10 pr-10 h-12 text-sm sm:text-base bg-white border rounded-2xl placeholder-slate-400 focus:outline-none transition shadow-2xs ${
             value
               ? 'border-emerald-500 ring-2 ring-emerald-500/10'
               : errorMsg
               ? 'border-rose-400 ring-2 ring-rose-400/10'
-              : 'border-slate-300 hover:border-slate-400 focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10'
+              : 'border-slate-300 hover:border-slate-400 focus:border-sky-600 focus:ring-2 focus:ring-sky-600/10'
           }`}
         />
 
-        <div className="absolute inset-y-0 right-0 pr-3 flex items-center space-x-1">
-          {isLoading && <Loader2 className="w-4 h-4 text-slate-500 animate-spin" />}
+        <div className="absolute inset-y-0 right-0 pr-2.5 flex items-center space-x-1">
+          {isLoading && <Loader2 className="w-4 h-4 text-slate-500 animate-spin mr-1" />}
           {inputText && !isLoading && (
             <button
               type="button"
               onClick={handleClear}
-              className="text-slate-400 hover:text-slate-700 p-1 rounded-md hover:bg-slate-100 transition"
+              className="text-slate-400 hover:text-slate-700 p-2 rounded-xl hover:bg-slate-100 transition cursor-pointer"
               aria-label={`Clear ${label}`}
             >
-              <X className="w-3.5 h-3.5" />
+              <X className="w-4 h-4" />
             </button>
           )}
         </div>
       </div>
 
-      {errorMsg && <p className="text-xs text-rose-600 font-medium">{errorMsg}</p>}
+      {errorMsg && <p className="text-xs text-rose-600 font-medium px-1">{errorMsg}</p>}
 
-      {/* Autocomplete Dropdown */}
+      {/* Autocomplete Dropdown - Mobile Touch Optimized */}
       {isOpen && suggestions.length > 0 && (
         <ul
           role="listbox"
-          className="absolute z-50 left-0 right-0 mt-1 max-h-64 overflow-y-auto bg-white border border-slate-200 rounded-xl shadow-soft-md divide-y divide-slate-100 text-sm animate-fade-in"
+          className="absolute z-50 left-0 right-0 mt-1 max-h-64 sm:max-h-60 overflow-y-auto bg-white/95 backdrop-blur-xl border border-slate-200/90 rounded-2xl shadow-xl divide-y divide-slate-100 text-sm animate-fade-in"
         >
           {suggestions.map((loc, idx) => {
             const isSelected = idx === selectedIndex;
@@ -190,7 +196,7 @@ export const LocationInput: React.FC<LocationInputProps> = ({
                 aria-selected={isSelected}
                 onClick={() => handleSelectLocation(loc)}
                 onMouseEnter={() => setSelectedIndex(idx)}
-                className={`px-3.5 py-2.5 cursor-pointer transition flex items-start space-x-2.5 ${
+                className={`px-4 py-3 sm:py-2.5 cursor-pointer transition flex items-start space-x-3 active:bg-slate-100 ${
                   isSelected
                     ? 'bg-slate-100 text-slate-900 font-medium'
                     : 'text-slate-700 hover:bg-slate-50'
