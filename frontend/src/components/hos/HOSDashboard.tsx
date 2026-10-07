@@ -1,0 +1,196 @@
+import React from 'react';
+import { TripSummary, HOSSummary } from '../../types/trip';
+import { ShieldCheck, Clock, Navigation, AlertTriangle, Bed, Fuel, RotateCcw } from 'lucide-react';
+
+interface HOSDashboardProps {
+  trip: TripSummary;
+  hos: HOSSummary;
+}
+
+export const HOSDashboard: React.FC<HOSDashboardProps> = ({ trip, hos }) => {
+  const cyclePercent = Math.min(100, (hos.final_cycle_used / hos.cycle_limit) * 100);
+
+  return (
+    <section id="hos-dashboard-section" className="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-soft-sm dark:shadow-dark-md space-y-6 transition-colors">
+      {/* Header and Compliance Status */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-slate-100 dark:border-slate-800">
+        <div>
+          <div className="flex items-center space-x-2.5">
+            <span className="p-2 rounded-xl bg-teal-50 dark:bg-teal-950/40 text-teal-700 dark:text-teal-400 border border-teal-100 dark:border-teal-800/80">
+              <Clock className="w-5 h-5" />
+            </span>
+            <h3 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">
+              HOS Compliance & Trip Dashboard
+            </h3>
+          </div>
+          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1.5">
+            Real-time compliance clocks under FMCSA 70h/8d property-carrier rules.
+          </p>
+        </div>
+
+        {/* Status Badge */}
+        <div className={`px-4 py-2 rounded-xl flex items-center space-x-2.5 border shadow-2xs ${
+          hos.status_label === 'Compliant'
+            ? 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-800/80 text-emerald-800 dark:text-emerald-300'
+            : 'bg-amber-50 dark:bg-amber-950/40 border-amber-200 dark:border-amber-800/80 text-amber-800 dark:text-amber-300'
+        }`}>
+          {hos.status_label === 'Compliant' ? (
+            <ShieldCheck className="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+          ) : (
+            <AlertTriangle className="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0" />
+          )}
+          <div>
+            <div className="text-xs font-bold uppercase tracking-wider">{hos.status_label}</div>
+            <div className="text-[11px] opacity-90">{hos.status_message}</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Hero Metric Cards Grid */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* Metric 1: Total Trip Distance */}
+        <div className="bg-slate-50/70 dark:bg-slate-800/50 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-700/60 space-y-1 hover:border-slate-300 dark:hover:border-slate-600 transition">
+          <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 font-medium">
+            <span>Total Route Miles</span>
+            <Navigation className="w-4 h-4 text-sky-600 dark:text-sky-400" />
+          </div>
+          <div className="text-2xl font-mono font-extrabold text-slate-900 dark:text-white">
+            {trip.total_miles.toLocaleString()} <span className="text-xs font-normal text-slate-500 dark:text-slate-400">mi</span>
+          </div>
+          <div className="text-[11px] text-slate-400 dark:text-slate-500">
+            Leg 1: {trip.leg1_miles} mi • Leg 2: {trip.leg2_miles} mi
+          </div>
+        </div>
+
+        {/* Metric 2: Driving Time */}
+        <div className="bg-slate-50/70 dark:bg-slate-800/50 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-700/60 space-y-1 hover:border-slate-300 dark:hover:border-slate-600 transition">
+          <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 font-medium">
+            <span>Base Driving Time</span>
+            <Clock className="w-4 h-4 text-teal-600 dark:text-teal-400" />
+          </div>
+          <div className="text-2xl font-mono font-extrabold text-teal-700 dark:text-teal-400">
+            {trip.base_driving_formatted}
+          </div>
+          <div className="text-[11px] text-slate-400 dark:text-slate-500">
+            Net vehicle movement only
+          </div>
+        </div>
+
+        {/* Metric 3: Total Elapsed Time */}
+        <div className="bg-slate-50/70 dark:bg-slate-800/50 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-700/60 space-y-1 hover:border-slate-300 dark:hover:border-slate-600 transition">
+          <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 font-medium">
+            <span>Total Planned Elapsed</span>
+            <Clock className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+          </div>
+          <div className="text-2xl font-mono font-extrabold text-indigo-700 dark:text-indigo-400">
+            {trip.total_elapsed_formatted}
+          </div>
+          <div className="text-[11px] text-slate-400 dark:text-slate-500">
+            Spans {trip.calendar_days_count} calendar {trip.calendar_days_count === 1 ? 'day' : 'days'}
+          </div>
+        </div>
+
+        {/* Metric 4: Planned Stops */}
+        <div className="bg-slate-50/70 dark:bg-slate-800/50 p-4 rounded-2xl border border-slate-200/80 dark:border-slate-700/60 space-y-1 hover:border-slate-300 dark:hover:border-slate-600 transition">
+          <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 font-medium">
+            <span>Operational Stops</span>
+            <ShieldCheck className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+          </div>
+          <div className="text-2xl font-mono font-extrabold text-amber-700 dark:text-amber-400">
+            {trip.stops_count} <span className="text-xs font-normal text-slate-500 dark:text-slate-400">stops</span>
+          </div>
+          <div className="text-[11px] text-slate-400 dark:text-slate-500">
+            {hos.fuel_stops_count} Fuel • {hos.rest_30_breaks_count} Breaks • {hos.rest_10_resets_count} Resets
+          </div>
+        </div>
+      </div>
+
+      {/* Cycle Gauge & Stops Breakdown */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 pt-2">
+        {/* 70-Hour Cycle Monitor Card */}
+        <div className="lg:col-span-2 bg-slate-50/70 dark:bg-slate-800/50 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-700/60 space-y-4">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300">
+              70-Hour / 8-Day Active Cycle Clocks
+            </span>
+            <span className="text-xs font-mono font-semibold text-slate-500 dark:text-slate-400 bg-white dark:bg-slate-800 px-2 py-0.5 rounded border border-slate-200 dark:border-slate-700">
+              Limit: 70.0 hrs
+            </span>
+          </div>
+
+          <div className="grid grid-cols-3 gap-3 text-center">
+            <div className="p-3 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700/80 shadow-2xs">
+              <div className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Initial Cycle Used</div>
+              <div className="text-lg font-mono font-bold text-slate-800 dark:text-slate-100">{hos.initial_cycle_used.toFixed(2)}h</div>
+            </div>
+            <div className="p-3 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700/80 shadow-2xs">
+              <div className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Trip End Cycle Used</div>
+              <div className="text-lg font-mono font-bold text-sky-700 dark:text-sky-400">{hos.final_cycle_used.toFixed(2)}h</div>
+            </div>
+            <div className="p-3 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-700/80 shadow-2xs">
+              <div className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Cycle Remaining</div>
+              <div className="text-lg font-mono font-bold text-emerald-600 dark:text-emerald-400">{hos.final_cycle_remaining.toFixed(2)}h</div>
+            </div>
+          </div>
+
+          <div className="space-y-1.5">
+            <div className="w-full bg-slate-200/90 dark:bg-slate-700 h-2.5 rounded-full overflow-hidden">
+              <div
+                className={`h-full transition-all duration-500 ${
+                  cyclePercent > 85 ? 'bg-rose-500' : cyclePercent > 60 ? 'bg-amber-500' : 'bg-sky-600 dark:bg-sky-500'
+                }`}
+                style={{ width: `${cyclePercent}%` }}
+              />
+            </div>
+            <div className="flex justify-between text-[11px] text-slate-500 dark:text-slate-400 font-mono">
+              <span>0h</span>
+              <span className="font-semibold text-slate-700 dark:text-slate-300">{hos.final_cycle_used.toFixed(1)}h Used ({cyclePercent.toFixed(0)}%)</span>
+              <span>70.0h</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Scheduled HOS Interventions Card */}
+        <div className="bg-slate-50/70 dark:bg-slate-800/50 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-700/60 space-y-3">
+          <span className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 block">
+            Scheduled HOS Interventions
+          </span>
+
+          <div className="space-y-2 text-xs">
+            <div className="flex items-center justify-between p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-700/80 shadow-2xs">
+              <span className="flex items-center space-x-2 text-amber-800 dark:text-amber-300 font-medium">
+                <Fuel className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                <span>Fuel Stops (≤1,000 mi)</span>
+              </span>
+              <span className="font-mono font-bold text-slate-900 dark:text-white bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded text-xs">{hos.fuel_stops_count}</span>
+            </div>
+
+            <div className="flex items-center justify-between p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-700/80 shadow-2xs">
+              <span className="flex items-center space-x-2 text-cyan-800 dark:text-cyan-300 font-medium">
+                <Clock className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
+                <span>30-min Breaks (after 8h)</span>
+              </span>
+              <span className="font-mono font-bold text-slate-900 dark:text-white bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded text-xs">{hos.rest_30_breaks_count}</span>
+            </div>
+
+            <div className="flex items-center justify-between p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-700/80 shadow-2xs">
+              <span className="flex items-center space-x-2 text-indigo-800 dark:text-indigo-300 font-medium">
+                <Bed className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+                <span>10-hour Off-Duty Resets</span>
+              </span>
+              <span className="font-mono font-bold text-slate-900 dark:text-white bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded text-xs">{hos.rest_10_resets_count}</span>
+            </div>
+
+            <div className="flex items-center justify-between p-2.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-700/80 shadow-2xs">
+              <span className="flex items-center space-x-2 text-rose-800 dark:text-rose-300 font-medium">
+                <RotateCcw className="w-4 h-4 text-rose-600 dark:text-rose-400" />
+                <span>34-hour Cycle Restarts</span>
+              </span>
+              <span className="font-mono font-bold text-slate-900 dark:text-white bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded text-xs">{hos.restart_34_count}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
