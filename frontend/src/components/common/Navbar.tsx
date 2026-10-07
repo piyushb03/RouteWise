@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Truck, ShieldCheck, MapPin, FileText, Clock, Compass, Sun, Moon, Monitor, Menu, X } from 'lucide-react';
+import { Truck, ShieldCheck, MapPin, FileText, Clock, Compass, Sun, Moon, Menu, X } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 
 interface NavbarProps {
@@ -8,7 +8,7 @@ interface NavbarProps {
 }
 
 export const Navbar: React.FC<NavbarProps> = ({ hasResults, onScrollTo }) => {
-  const { theme, setTheme } = useTheme();
+  const { theme, setTheme, toggleTheme } = useTheme();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleNavClick = (sectionId: string) => {
@@ -96,46 +96,41 @@ export const Navbar: React.FC<NavbarProps> = ({ hasResults, onScrollTo }) => {
               <span className="font-mono text-[11px]">FMCSA 70/8 Property</span>
             </div>
 
-            {/* Theme Toggle Button (Light / Dark / System) */}
-            <div className="flex items-center bg-slate-100 dark:bg-slate-800 p-0.5 rounded-lg border border-slate-200 dark:border-slate-700">
+            {/* Theme Switcher: Light / Dark Mode Toggle */}
+            <div
+              className="flex items-center bg-slate-100 dark:bg-slate-800 p-0.5 sm:p-1 rounded-xl border border-slate-200 dark:border-slate-700 shadow-2xs"
+              role="group"
+              aria-label="Theme switcher"
+            >
               <button
                 type="button"
                 onClick={() => setTheme('light')}
-                className={`p-1.5 rounded-md text-xs transition ${
+                className={`flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-150 cursor-pointer ${
                   theme === 'light'
-                    ? 'bg-white text-slate-900 shadow-2xs'
-                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
+                    ? 'bg-white text-slate-900 shadow-2xs font-bold'
+                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                 }`}
-                title="Light mode"
-                aria-label="Switch to light theme"
+                title="Switch to Light mode"
+                aria-label="Light mode"
+                aria-pressed={theme === 'light'}
               >
-                <Sun className="w-3.5 h-3.5" />
+                <Sun className={`w-3.5 h-3.5 ${theme === 'light' ? 'text-amber-500' : 'text-slate-400'}`} />
+                <span className="text-[11px] sm:text-xs">Light</span>
               </button>
               <button
                 type="button"
                 onClick={() => setTheme('dark')}
-                className={`p-1.5 rounded-md text-xs transition ${
+                className={`flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-150 cursor-pointer ${
                   theme === 'dark'
-                    ? 'bg-slate-900 text-white shadow-2xs'
-                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
+                    ? 'bg-slate-900 text-white shadow-2xs font-bold'
+                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                 }`}
-                title="Dark mode"
-                aria-label="Switch to dark theme"
+                title="Switch to Dark mode"
+                aria-label="Dark mode"
+                aria-pressed={theme === 'dark'}
               >
-                <Moon className="w-3.5 h-3.5" />
-              </button>
-              <button
-                type="button"
-                onClick={() => setTheme('system')}
-                className={`p-1.5 rounded-md text-xs transition hidden sm:inline-flex ${
-                  theme === 'system'
-                    ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-2xs'
-                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
-                }`}
-                title="System preference"
-                aria-label="Use system color theme"
-              >
-                <Monitor className="w-3.5 h-3.5" />
+                <Moon className={`w-3.5 h-3.5 ${theme === 'dark' ? 'text-sky-400' : 'text-slate-400'}`} />
+                <span className="text-[11px] sm:text-xs">Dark</span>
               </button>
             </div>
 
@@ -191,6 +186,28 @@ export const Navbar: React.FC<NavbarProps> = ({ hasResults, onScrollTo }) => {
               >
                 <ShieldCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                 <span>Compliance Audit Checklist</span>
+              </button>
+            </div>
+
+            {/* Mobile Appearance Toggle Row */}
+            <div className="mt-3 pt-3 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs px-1">
+              <span className="text-slate-500 dark:text-slate-400 font-medium">Color Theme:</span>
+              <button
+                type="button"
+                onClick={toggleTheme}
+                className="flex items-center space-x-2 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 font-semibold border border-slate-200 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700 transition cursor-pointer"
+              >
+                {theme === 'light' ? (
+                  <>
+                    <Moon className="w-3.5 h-3.5 text-sky-500" />
+                    <span>Switch to Dark Mode</span>
+                  </>
+                ) : (
+                  <>
+                    <Sun className="w-3.5 h-3.5 text-amber-500" />
+                    <span>Switch to Light Mode</span>
+                  </>
+                )}
               </button>
             </div>
           </div>
