@@ -13,24 +13,13 @@
     --text-muted: #64748b;
   }
 
-  .dark {
-    --bg-main: #070b14;
-    --bg-surface: #0f172a;
-    --bg-subtle: #162032;
-    --border-main: #1e293b;
-    --text-primary: #f8fafc;
-    --text-secondary: #cbd5e1;
-    --text-muted: #94a3b8;
-  }
-
   html {
     scroll-behavior: smooth;
-    transition: background-color 0.2s ease, color 0.2s ease;
   }
 
   body {
-    background-color: var(--bg-main);
-    color: var(--text-primary);
+    background-color: #f8fafc;
+    color: #0f172a;
   }
 }
 
@@ -50,13 +39,6 @@
   background: #94a3b8;
 }
 
-.dark ::-webkit-scrollbar-thumb {
-  background: #334155;
-}
-.dark ::-webkit-scrollbar-thumb:hover {
-  background: #475569;
-}
-
 /* Map z-index & container normalization */
 .leaflet-container {
   width: 100%;
@@ -65,11 +47,6 @@
   z-index: 10;
   font-family: inherit;
 }
-
-.dark .leaflet-tile-pane {
-  filter: brightness(0.85) contrast(1.1);
-}
-
 /* Respect user's motion preferences */
 @media (prefers-reduced-motion: reduce) {
   *,

@@ -171,47 +171,47 @@ export const TripPlannerForm: React.FC<TripPlannerFormProps> = ({ onPlanTrip, is
   };
 
   return (
-    <section id="planner-form-section" className="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-soft-sm dark:shadow-dark-md transition-colors relative overflow-hidden">
+    <section id="planner-form-section" className="bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-8 shadow-soft-sm relative overflow-hidden">
       {/* Preset Quick Actions */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-6 border-b border-slate-100 dark:border-slate-800">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-6 border-b border-slate-100">
         <div>
           <div className="flex items-center space-x-2.5">
-            <span className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-sky-400 border border-slate-200 dark:border-slate-700">
+            <span className="p-2 rounded-xl bg-slate-100 text-slate-900 border border-slate-200">
               <Truck className="w-5 h-5" />
             </span>
-            <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
+            <h2 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
               Interstate CMV Trip Planner
             </h2>
           </div>
-          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1.5">
+          <p className="text-xs sm:text-sm text-slate-500 mt-1.5">
             Configure departure, shipper loading, receiver delivery, and current cycle hours.
           </p>
         </div>
 
         {/* Quick sample buttons for assessment evaluator */}
         <div className="flex items-center flex-wrap gap-2 text-xs">
-          <span className="text-slate-500 dark:text-slate-400 flex items-center space-x-1 font-medium">
+          <span className="text-slate-500 flex items-center space-x-1 font-medium">
             <Sparkles className="w-3.5 h-3.5 text-amber-500" />
             <span>Sample Trips:</span>
           </span>
           <button
             type="button"
             onClick={() => handleApplyPreset('chicago')}
-            className="px-3 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 font-medium transition active:scale-95 shadow-2xs"
+            className="px-3 py-1.5 rounded-lg bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 font-medium transition active:scale-95 shadow-2xs"
           >
             Dallas → Chicago
           </button>
           <button
             type="button"
             onClick={() => handleApplyPreset('cross_country')}
-            className="px-3 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 font-medium transition active:scale-95 shadow-2xs"
+            className="px-3 py-1.5 rounded-lg bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 font-medium transition active:scale-95 shadow-2xs"
           >
             LA → Dallas (1,400+ mi)
           </button>
           <button
             type="button"
             onClick={() => handleApplyPreset('florida')}
-            className="px-3 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 font-medium transition active:scale-95 shadow-2xs"
+            className="px-3 py-1.5 rounded-lg bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 font-medium transition active:scale-95 shadow-2xs"
           >
             Atlanta → Miami
           </button>
@@ -219,7 +219,7 @@ export const TripPlannerForm: React.FC<TripPlannerFormProps> = ({ onPlanTrip, is
       </div>
 
       {validationError && (
-        <div className="mb-6 flex items-start space-x-2.5 p-3.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/60 text-rose-700 dark:text-rose-300 text-xs animate-slide-up">
+        <div className="mb-6 flex items-start space-x-2.5 p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs animate-slide-up">
           <AlertCircle className="w-4 h-4 shrink-0 text-rose-500 mt-0.5" />
           <span className="font-medium">{validationError}</span>
         </div>
@@ -260,13 +260,13 @@ export const TripPlannerForm: React.FC<TripPlannerFormProps> = ({ onPlanTrip, is
         <CycleHoursInput value={cycleUsed} onChange={setCycleUsed} />
 
         {/* Action Bar */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-5 border-t border-slate-100 dark:border-slate-800">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-5 border-t border-slate-100">
           <button
             type="button"
             onClick={() => setIsAdvancedOpen(true)}
-            className="w-full sm:w-auto flex items-center justify-center space-x-2 px-4 py-2.5 rounded-xl bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 text-xs font-semibold shadow-2xs transition"
+            className="w-full sm:w-auto flex items-center justify-center space-x-2 px-4 py-2.5 rounded-xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 text-xs font-semibold shadow-2xs transition"
           >
-            <Sliders className="w-4 h-4 text-slate-500 dark:text-slate-400" />
+            <Sliders className="w-4 h-4 text-slate-500" />
             <span>Advanced Details (Start Time, Carrier, Driver)</span>
           </button>
 
@@ -275,8 +275,8 @@ export const TripPlannerForm: React.FC<TripPlannerFormProps> = ({ onPlanTrip, is
             disabled={isLoading}
             className={`w-full sm:w-auto flex items-center justify-center space-x-2 px-7 py-3 rounded-xl font-bold text-sm shadow-soft-sm transition-all ${
               isLoading
-                ? 'bg-slate-300 dark:bg-slate-800 text-slate-500 cursor-not-allowed'
-                : 'bg-slate-900 hover:bg-slate-800 dark:bg-sky-600 dark:hover:bg-sky-500 text-white shadow-soft-sm active:scale-[0.99]'
+                ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
+                : 'bg-slate-900 hover:bg-slate-800 text-white shadow-soft-sm active:scale-[0.99]'
             }`}
           >
             <Navigation className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />

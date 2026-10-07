@@ -122,20 +122,20 @@ export const LocationInput: React.FC<LocationInputProps> = ({
   return (
     <div ref={containerRef} className="relative space-y-1.5">
       <div className="flex items-center justify-between">
-        <label htmlFor={id} className="block text-xs font-bold text-slate-800 dark:text-slate-200 tracking-wide uppercase">
+        <label htmlFor={id} className="block text-xs font-bold text-slate-800 tracking-wide uppercase">
           {label} {required && <span className="text-rose-500">*</span>}
         </label>
         {value && (
-          <span className="inline-flex items-center space-x-1 text-[11px] text-emerald-800 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/80 px-2 py-0.5 rounded-full font-medium shadow-2xs">
-            <CheckCircle2 className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
+          <span className="inline-flex items-center space-x-1 text-[11px] text-emerald-800 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full font-medium shadow-2xs">
+            <CheckCircle2 className="w-3 h-3 text-emerald-600" />
             <span className="font-mono text-[10px]">{value.latitude.toFixed(2)}, {value.longitude.toFixed(2)}</span>
           </span>
         )}
       </div>
 
       <div className="relative">
-        <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 dark:text-slate-500">
-          <MapPin className="w-4 h-4 text-slate-500 dark:text-slate-400" />
+        <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+          <MapPin className="w-4 h-4 text-slate-500" />
         </div>
 
         <input
@@ -149,22 +149,22 @@ export const LocationInput: React.FC<LocationInputProps> = ({
           }}
           placeholder={placeholder}
           autoComplete="off"
-          className={`w-full pl-9 pr-10 py-2.5 bg-white dark:bg-slate-900 border rounded-xl text-sm text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none transition shadow-soft-sm dark:shadow-dark-sm ${
+          className={`w-full pl-9 pr-10 py-2.5 bg-white border rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none transition shadow-2xs ${
             value
-              ? 'border-emerald-500 dark:border-emerald-500 ring-2 ring-emerald-500/10 dark:ring-emerald-500/20'
+              ? 'border-emerald-500 ring-2 ring-emerald-500/10'
               : errorMsg
-              ? 'border-rose-400 dark:border-rose-500 ring-2 ring-rose-400/10'
-              : 'border-slate-300 dark:border-slate-700 hover:border-slate-400 dark:hover:border-slate-600 focus:border-slate-900 dark:focus:border-sky-400 focus:ring-2 focus:ring-slate-900/10 dark:focus:ring-sky-400/20'
+              ? 'border-rose-400 ring-2 ring-rose-400/10'
+              : 'border-slate-300 hover:border-slate-400 focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10'
           }`}
         />
 
         <div className="absolute inset-y-0 right-0 pr-3 flex items-center space-x-1">
-          {isLoading && <Loader2 className="w-4 h-4 text-slate-500 dark:text-slate-400 animate-spin" />}
+          {isLoading && <Loader2 className="w-4 h-4 text-slate-500 animate-spin" />}
           {inputText && !isLoading && (
             <button
               type="button"
               onClick={handleClear}
-              className="text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 p-1 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+              className="text-slate-400 hover:text-slate-700 p-1 rounded-md hover:bg-slate-100 transition"
               aria-label={`Clear ${label}`}
             >
               <X className="w-3.5 h-3.5" />
@@ -173,13 +173,13 @@ export const LocationInput: React.FC<LocationInputProps> = ({
         </div>
       </div>
 
-      {errorMsg && <p className="text-xs text-rose-600 dark:text-rose-400 font-medium">{errorMsg}</p>}
+      {errorMsg && <p className="text-xs text-rose-600 font-medium">{errorMsg}</p>}
 
       {/* Autocomplete Dropdown */}
       {isOpen && suggestions.length > 0 && (
         <ul
           role="listbox"
-          className="absolute z-50 left-0 right-0 mt-1 max-h-64 overflow-y-auto bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl shadow-soft-md dark:shadow-dark-lg divide-y divide-slate-100 dark:divide-slate-800 text-sm animate-fade-in"
+          className="absolute z-50 left-0 right-0 mt-1 max-h-64 overflow-y-auto bg-white border border-slate-200 rounded-xl shadow-soft-md divide-y divide-slate-100 text-sm animate-fade-in"
         >
           {suggestions.map((loc, idx) => {
             const isSelected = idx === selectedIndex;
@@ -192,14 +192,14 @@ export const LocationInput: React.FC<LocationInputProps> = ({
                 onMouseEnter={() => setSelectedIndex(idx)}
                 className={`px-3.5 py-2.5 cursor-pointer transition flex items-start space-x-2.5 ${
                   isSelected
-                    ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white font-medium'
-                    : 'text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800/60'
+                    ? 'bg-slate-100 text-slate-900 font-medium'
+                    : 'text-slate-700 hover:bg-slate-50'
                 }`}
               >
-                <Search className="w-4 h-4 text-slate-400 dark:text-slate-500 shrink-0 mt-0.5" />
+                <Search className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
                 <div className="min-w-0 flex-1">
-                  <div className="font-semibold text-slate-900 dark:text-white truncate">{loc.name}</div>
-                  <div className="text-xs text-slate-500 dark:text-slate-400 truncate">{loc.formatted_address}</div>
+                  <div className="font-semibold text-slate-900 truncate">{loc.name}</div>
+                  <div className="text-xs text-slate-500 truncate">{loc.formatted_address}</div>
                 </div>
               </li>
             );

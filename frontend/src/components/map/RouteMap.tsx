@@ -3,7 +3,6 @@ import { MapContainer, TileLayer, Polyline, Marker, Popup, useMap } from 'react-
 import L from 'leaflet';
 import { Stop, RouteData } from '../../types/trip';
 import { MapPin } from 'lucide-react';
-import { useTheme } from '../../context/ThemeContext';
 
 interface RouteMapProps {
   route: RouteData;
@@ -89,7 +88,6 @@ const createMarkerIcon = (type: string) => {
 };
 
 export const RouteMap: React.FC<RouteMapProps> = ({ route, stops }) => {
-  const { resolvedTheme } = useTheme();
   const coordinates = route.combined_coordinates;
 
   const center: [number, number] = useMemo(() => {
@@ -99,33 +97,28 @@ export const RouteMap: React.FC<RouteMapProps> = ({ route, stops }) => {
     return [39.8283, -98.5795]; // Center of USA
   }, [coordinates]);
 
-  const tileUrl = resolvedTheme === 'dark'
-    ? 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png'
-    : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-
-  const tileAttr = resolvedTheme === 'dark'
-    ? '&copy; <a href="https://carto.com/">CARTO</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-    : '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+  const tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+  const tileAttr = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
 
   return (
-    <section id="map-section" className="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-3xl p-6 shadow-soft-sm dark:shadow-dark-md space-y-4 transition-colors">
+    <section id="map-section" className="bg-white border border-slate-200/90 rounded-3xl p-6 shadow-soft-sm space-y-4">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <div>
           <div className="flex items-center space-x-2">
-            <span className="p-1.5 rounded-lg bg-sky-50 dark:bg-sky-950/40 text-sky-700 dark:text-sky-400 border border-sky-100 dark:border-sky-800/80">
+            <span className="p-1.5 rounded-lg bg-sky-50 text-sky-700 border border-sky-100">
               <MapPin className="w-5 h-5" />
             </span>
-            <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+            <h3 className="text-lg font-bold text-slate-900">
               Interactive Interstate Route Map
             </h3>
           </div>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+          <p className="text-xs text-slate-500 mt-1">
             Visualized route geometry with all inserted rest breaks, fuel stops, and daily resets.
           </p>
         </div>
 
         {/* Legend */}
-        <div className="flex flex-wrap items-center gap-2.5 text-[11px] text-slate-700 dark:text-slate-300 font-medium bg-slate-50 dark:bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-2xs">
+        <div className="flex flex-wrap items-center gap-2.5 text-[11px] text-slate-700 font-medium bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200 shadow-2xs">
           <span className="flex items-center space-x-1"><span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span><span>Start</span></span>
           <span className="flex items-center space-x-1"><span className="w-2.5 h-2.5 rounded-full bg-blue-500"></span><span>Pickup</span></span>
           <span className="flex items-center space-x-1"><span className="w-2.5 h-2.5 rounded-full bg-purple-500"></span><span>Dropoff</span></span>
@@ -137,7 +130,7 @@ export const RouteMap: React.FC<RouteMapProps> = ({ route, stops }) => {
       </div>
 
       {/* Leaflet Map Container */}
-      <div className="relative h-[460px] sm:h-[560px] w-full rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 shadow-inner">
+      <div className="relative h-[460px] sm:h-[560px] w-full rounded-2xl overflow-hidden border border-slate-200 shadow-inner">
         <MapContainer center={center} zoom={6} scrollWheelZoom={true} className="h-full w-full">
           <TileLayer
             key={tileUrl}
@@ -150,20 +143,20 @@ export const RouteMap: React.FC<RouteMapProps> = ({ route, stops }) => {
           {/* Route Polyline */}
           {coordinates.length > 0 && (
             <>
-              {/* Outer stroke */}
+              {/* Outer halo */}
               <Polyline
                 positions={coordinates}
                 pathOptions={{
-                  color: resolvedTheme === 'dark' ? '#0369a1' : '#0284c7',
-                  weight: 6,
-                  opacity: 0.6
+                  color: '#0284c7',
+                  weight: 7,
+                  opacity: 0.25
                 }}
               />
               {/* Crisp inner line */}
               <Polyline
                 positions={coordinates}
                 pathOptions={{
-                  color: resolvedTheme === 'dark' ? '#38bdf8' : '#0284c7',
+                  color: '#0284c7',
                   weight: 3.5,
                   opacity: 1.0
                 }}

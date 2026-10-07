@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { TripPlanResponse, Location, AdvancedTripSettings } from './types/trip';
 import { planTrip } from './services/api';
-import { useTheme } from './context/ThemeContext';
 import { Navbar } from './components/common/Navbar';
 import { Footer } from './components/common/Footer';
 import { TripPlannerForm } from './components/trip/TripPlannerForm';
@@ -14,7 +13,6 @@ import { DailyLogViewer } from './components/logs/DailyLogViewer';
 import { Loader2, AlertCircle, Shield, Clock, Fuel, FileSpreadsheet, ArrowDown } from 'lucide-react';
 
 export const App: React.FC = () => {
-  const { theme } = useTheme();
   const [planResult, setPlanResult] = useState<TripPlanResponse | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [loadingStep, setLoadingStep] = useState('Initiating trip calculation...');
@@ -88,25 +86,25 @@ export const App: React.FC = () => {
   };
 
   return (
-    <div className={`min-h-screen ${theme === 'dark' ? 'dark bg-slate-950 text-slate-100' : 'bg-slate-50 text-slate-900'} flex flex-col font-sans transition-colors selection:bg-slate-900 selection:text-white dark:selection:bg-sky-500 dark:selection:text-slate-950`}>
+    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans selection:bg-slate-900 selection:text-white">
       {/* Navigation */}
       <Navbar hasResults={!!planResult} onScrollTo={handleScrollTo} />
 
       <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full space-y-10">
         {/* Editorial Commercial Hero Section */}
         <section className="pt-2 pb-4">
-          <div className="border border-slate-200 dark:border-slate-800 rounded-3xl bg-white dark:bg-slate-900/70 p-6 sm:p-10 shadow-soft-sm dark:shadow-dark-md relative overflow-hidden transition-colors">
+          <div className="border border-slate-200/90 rounded-3xl bg-white p-6 sm:p-10 shadow-soft-sm relative overflow-hidden">
             {/* Subtle background structural accents */}
-            <div className="absolute top-0 right-0 w-80 h-80 bg-sky-500/5 dark:bg-sky-400/5 rounded-full blur-3xl pointer-events-none"></div>
+            <div className="absolute top-0 right-0 w-80 h-80 bg-sky-500/5 rounded-full blur-3xl pointer-events-none"></div>
 
             <div className="relative z-10 space-y-6">
               {/* Badge Bar */}
               <div className="flex flex-wrap items-center gap-2">
-                <span className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
-                  <Shield className="w-3.5 h-3.5 text-sky-600 dark:text-sky-400" />
+                <span className="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-700 border border-slate-200">
+                  <Shield className="w-3.5 h-3.5 text-sky-600" />
                   <span>FMCSA 49 CFR Part 395 Specification</span>
                 </span>
-                <span className="hidden sm:inline-flex items-center space-x-1 text-xs font-mono text-slate-500 dark:text-slate-400">
+                <span className="hidden sm:inline-flex items-center space-x-1 text-xs font-mono text-slate-500">
                   <span>·</span>
                   <span>70h / 8-Day Property-Carrying Standard</span>
                 </span>
@@ -115,14 +113,14 @@ export const App: React.FC = () => {
               {/* Editorial Title & Subtitle */}
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-end">
                 <div className="lg:col-span-8 space-y-3">
-                  <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-[1.12]">
+                  <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-slate-900 leading-[1.12]">
                     Commercial CMV Route Planning &{' '}
-                    <span className="text-sky-700 dark:text-sky-400 font-black">
+                    <span className="text-sky-700 font-black">
                       FMCSA ELD Daily Log
                     </span>{' '}
                     Automation
                   </h1>
-                  <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 leading-relaxed max-w-2xl font-normal">
+                  <p className="text-sm sm:text-base text-slate-600 leading-relaxed max-w-2xl font-normal">
                     RouteWise plans property-carrying truck trips, enforces mandatory 30-minute rest breaks after 8 hours of driving, schedules 10-hour off-duty resets at 11h/14h limits, inserts fuel stops every ≤1,000 miles, and renders official 24.0-hour vector SVG driver daily log sheets with continuous duty status graphing.
                   </p>
                 </div>
@@ -132,7 +130,7 @@ export const App: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => handleScrollTo('planner-form-section')}
-                    className="inline-flex items-center space-x-2 px-5 py-3 rounded-xl bg-slate-900 dark:bg-sky-600 text-white font-semibold text-xs tracking-wide shadow-soft-sm dark:shadow-dark-sm hover:bg-slate-800 dark:hover:bg-sky-500 transition active:scale-95"
+                    className="inline-flex items-center space-x-2 px-5 py-3 rounded-xl bg-slate-900 text-white font-semibold text-xs tracking-wide shadow-soft-sm hover:bg-slate-800 transition active:scale-95 cursor-pointer"
                   >
                     <span>Configure Trip Waypoints</span>
                     <ArrowDown className="w-4 h-4 animate-bounce" />
@@ -141,43 +139,43 @@ export const App: React.FC = () => {
               </div>
 
               {/* Logistics Telemetry Pillars */}
-              <div className="pt-6 border-t border-slate-100 dark:border-slate-800/80 grid grid-cols-2 md:grid-cols-4 gap-4 text-xs">
-                <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/60 space-y-1">
-                  <div className="flex items-center space-x-1.5 text-slate-500 dark:text-slate-400 font-medium">
-                    <Clock className="w-3.5 h-3.5 text-sky-600 dark:text-sky-400" />
+              <div className="pt-6 border-t border-slate-100 grid grid-cols-2 md:grid-cols-4 gap-4 text-xs">
+                <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1">
+                  <div className="flex items-center space-x-1.5 text-slate-500 font-medium">
+                    <Clock className="w-3.5 h-3.5 text-sky-600" />
                     <span>11h Driving Window</span>
                   </div>
-                  <div className="font-semibold text-slate-800 dark:text-slate-200">
+                  <div className="font-semibold text-slate-800">
                     Max 11.0h net movement per shift
                   </div>
                 </div>
 
-                <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/60 space-y-1">
-                  <div className="flex items-center space-x-1.5 text-slate-500 dark:text-slate-400 font-medium">
-                    <Clock className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
+                <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1">
+                  <div className="flex items-center space-x-1.5 text-slate-500 font-medium">
+                    <Clock className="w-3.5 h-3.5 text-teal-600" />
                     <span>14h Duty Window</span>
                   </div>
-                  <div className="font-semibold text-slate-800 dark:text-slate-200">
+                  <div className="font-semibold text-slate-800">
                     Consecutive span before 10h reset
                   </div>
                 </div>
 
-                <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/60 space-y-1">
-                  <div className="flex items-center space-x-1.5 text-slate-500 dark:text-slate-400 font-medium">
-                    <Fuel className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+                <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1">
+                  <div className="flex items-center space-x-1.5 text-slate-500 font-medium">
+                    <Fuel className="w-3.5 h-3.5 text-amber-600" />
                     <span>Fueling Rules</span>
                   </div>
-                  <div className="font-semibold text-slate-800 dark:text-slate-200">
+                  <div className="font-semibold text-slate-800">
                     Mandatory stop every ≤1,000 mi
                   </div>
                 </div>
 
-                <div className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/60 space-y-1">
-                  <div className="flex items-center space-x-1.5 text-slate-500 dark:text-slate-400 font-medium">
-                    <FileSpreadsheet className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
+                <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1">
+                  <div className="flex items-center space-x-1.5 text-slate-500 font-medium">
+                    <FileSpreadsheet className="w-3.5 h-3.5 text-indigo-600" />
                     <span>Vector Daily Logs</span>
                   </div>
-                  <div className="font-semibold text-slate-800 dark:text-slate-200">
+                  <div className="font-semibold text-slate-800">
                     24.0h partitioned SVG sheets
                   </div>
                 </div>
@@ -191,13 +189,13 @@ export const App: React.FC = () => {
 
         {/* Loading Overlay / Progress Indicator */}
         {isLoading && (
-          <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-8 text-center space-y-4 max-w-xl mx-auto shadow-soft-md dark:shadow-dark-md animate-fade-in transition-colors">
-            <Loader2 className="w-8 h-8 text-slate-900 dark:text-sky-400 animate-spin mx-auto" />
+          <div className="bg-white border border-slate-200 rounded-2xl p-8 text-center space-y-4 max-w-xl mx-auto shadow-soft-md animate-fade-in">
+            <Loader2 className="w-8 h-8 text-sky-600 animate-spin mx-auto" />
             <div className="space-y-1">
-              <h3 className="text-base font-bold text-slate-900 dark:text-white">
+              <h3 className="text-base font-bold text-slate-900">
                 Calculating Route Geometry & HOS Timeline
               </h3>
-              <p className="text-xs font-mono text-slate-600 dark:text-sky-300 font-medium">
+              <p className="text-xs font-mono text-slate-600 font-medium">
                 {loadingStep}
               </p>
             </div>
@@ -206,10 +204,10 @@ export const App: React.FC = () => {
 
         {/* Error Banner */}
         {errorMessage && (
-          <div className="bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/60 rounded-xl p-5 max-w-3xl mx-auto flex items-start space-x-3 text-xs text-rose-800 dark:text-rose-200 shadow-2xs">
-            <AlertCircle className="w-5 h-5 text-rose-600 dark:text-rose-400 shrink-0 mt-0.5" />
+          <div className="bg-rose-50 border border-rose-200 rounded-xl p-5 max-w-3xl mx-auto flex items-start space-x-3 text-xs text-rose-800 shadow-2xs">
+            <AlertCircle className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
             <div className="space-y-1">
-              <h4 className="font-bold text-rose-900 dark:text-rose-300 text-sm">Trip Planning Notice</h4>
+              <h4 className="font-bold text-rose-900 text-sm">Trip Planning Notice</h4>
               <p>{errorMessage}</p>
             </div>
           </div>
@@ -249,3 +247,4 @@ export const App: React.FC = () => {
     </div>
   );
 };
+
