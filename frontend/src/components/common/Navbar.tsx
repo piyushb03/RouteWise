@@ -27,15 +27,15 @@ export const Navbar: React.FC<NavbarProps> = ({ hasResults, onScrollTo }) => {
             onKeyDown={(e) => e.key === 'Enter' && window.scrollTo({ top: 0, behavior: 'smooth' })}
             aria-label="RouteWise Home"
           >
-            <div className="w-10 h-10 rounded-xl bg-slate-900 flex items-center justify-center text-white shadow-soft-sm transition-transform duration-200 group-hover:scale-105">
-              <Truck className="w-5 h-5 text-sky-400" />
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-600 to-blue-600 flex items-center justify-center text-white shadow-md shadow-sky-500/20 transition-transform duration-200 group-hover:scale-105">
+              <Truck className="w-5 h-5 text-white" />
             </div>
             <div>
               <div className="flex items-center space-x-2">
                 <span className="text-xl font-extrabold tracking-tight text-slate-900 font-sans">
-                  RouteWise
+                  Route<span className="text-sky-600 font-black">Wise</span>
                 </span>
-                <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200">
+                <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-sky-50 text-sky-700 border border-sky-200">
                   HOS · ELD
                 </span>
               </div>

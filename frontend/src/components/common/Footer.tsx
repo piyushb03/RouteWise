@@ -22,7 +22,7 @@ export const Footer: React.FC = () => {
         </div>
 
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-slate-100 text-slate-500 font-medium">
-          <p>© {new Date().getFullYear()} RouteWise. Professional Freight & HOS Planning Platform.</p>
+          <p>© {new Date().getFullYear()} Route<span className="text-sky-600 font-semibold">Wise</span>. Professional Freight & HOS Planning Platform.</p>
           <div className="flex items-center space-x-4">
             <span className="flex items-center space-x-1.5">
               <Globe className="w-3.5 h-3.5 text-slate-400" />

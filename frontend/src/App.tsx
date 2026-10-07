@@ -121,7 +121,7 @@ export const App: React.FC = () => {
                     Automation
                   </h1>
                   <p className="text-sm sm:text-base text-slate-600 leading-relaxed max-w-2xl font-normal">
-                    RouteWise plans property-carrying truck trips, enforces mandatory 30-minute rest breaks after 8 hours of driving, schedules 10-hour off-duty resets at 11h/14h limits, inserts fuel stops every ≤1,000 miles, and renders official 24.0-hour vector SVG driver daily log sheets with continuous duty status graphing.
+                    Route<span className="text-sky-600 font-semibold">Wise</span> plans property-carrying truck trips, enforces mandatory 30-minute rest breaks after 8 hours of driving, schedules 10-hour off-duty resets at 11h/14h limits, inserts fuel stops every ≤1,000 miles, and renders official 24.0-hour vector SVG driver daily log sheets with continuous duty status graphing.
                   </p>
                 </div>
 
