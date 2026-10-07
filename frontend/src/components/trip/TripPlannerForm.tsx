@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { Truck, ArrowRight, Sliders, Sparkles, Navigation, AlertCircle } from 'lucide-react';
 import { Location, AdvancedTripSettings } from '../../types/trip';
 import { LocationInput } from './LocationInput';
 import { CycleHoursInput } from './CycleHoursInput';
 import { AdvancedSettingsModal } from './AdvancedSettingsModal';
+import { Truck, Navigation, Sliders, ArrowRight, Sparkles, AlertCircle } from 'lucide-react';
 
 interface TripPlannerFormProps {
-  onPlanTrip: (payload: {
+  onPlanTrip: (data: {
     current: Location;
     pickup: Location;
     dropoff: Location;
@@ -20,141 +20,76 @@ interface TripPlannerFormProps {
 }
 
 export const TripPlannerForm: React.FC<TripPlannerFormProps> = ({ onPlanTrip, isLoading }) => {
-  const [currentLoc, setCurrentLoc] = useState<Location | null>(null);
-  const [pickupLoc, setPickupLoc] = useState<Location | null>(null);
-  const [dropoffLoc, setDropoffLoc] = useState<Location | null>(null);
-  const [cycleUsed, setCycleUsed] = useState<number>(12.5);
+  // Preset defaults for instant testing
+  const [currentLoc, setCurrentLoc] = useState<Location | null>({
+    name: 'Dallas, TX',
+    formatted_address: 'Dallas, Texas, United States',
+    latitude: 32.7767,
+    longitude: -96.797,
+    city: 'Dallas',
+    state: 'TX',
+    country: 'United States',
+  });
 
-  const [startDate, setStartDate] = useState<string>(new Date().toISOString().split('T')[0]);
+  const [pickupLoc, setPickupLoc] = useState<Location | null>({
+    name: 'Waco, TX',
+    formatted_address: 'Waco, Texas, United States',
+    latitude: 31.5493,
+    longitude: -97.1467,
+    city: 'Waco',
+    state: 'TX',
+    country: 'United States',
+  });
+
+  const [dropoffLoc, setDropoffLoc] = useState<Location | null>({
+    name: 'Chicago, IL',
+    formatted_address: 'Chicago, Illinois, United States',
+    latitude: 41.8781,
+    longitude: -87.6298,
+    city: 'Chicago',
+    state: 'IL',
+    country: 'United States',
+  });
+
+  const [cycleUsed, setCycleUsed] = useState<number>(15.0);
+
+  // Advanced / Log metadata settings
+  const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
+  const [startDate, setStartDate] = useState<string>(() => {
+    const today = new Date();
+    return today.toISOString().split('T')[0];
+  });
   const [startTime, setStartTime] = useState<string>('06:00');
   const [timezone, setTimezone] = useState<string>('America/Chicago');
-  const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
 
   const [advanced, setAdvanced] = useState<AdvancedTripSettings>({
-    driver_name: '',
+    driver_name: 'John Doe',
+    carrier_name: 'Continental Freight Logistics LLC',
+    truck_number: 'TRK-410',
+    trailer_number: 'TRL-5301',
+    carrier_address: '100 Logistics Pkwy, Dallas, TX 75201',
+    home_terminal_address: '500 Freight Way, Fort Worth, TX 76102',
+    shipping_doc_number: 'BOL-78921',
+    commodity: 'General Freight / Dry Goods',
     co_driver_name: '',
-    carrier_name: 'Lone Star Logistics LLC',
-    carrier_address: '100 Commerce St, Dallas, TX 75201',
-    home_terminal_address: '500 Logistics Way, Fort Worth, TX 76102',
-    truck_number: 'TRK-804',
-    trailer_number: 'TRL-5390',
-    shipping_doc_number: 'BOL-98214',
-    commodity: 'Commercial Freight',
   });
 
   const [validationError, setValidationError] = useState<string | null>(null);
-
-  // Pre-configured realistic trip presets for easy evaluation
-  const handleApplyPreset = (presetType: 'chicago' | 'cross_country' | 'florida') => {
-    setValidationError(null);
-    if (presetType === 'chicago') {
-      setCurrentLoc({
-        name: 'Dallas, TX',
-        formatted_address: 'Dallas, Dallas County, Texas, United States',
-        latitude: 32.7767,
-        longitude: -96.7970,
-        city: 'Dallas',
-        state: 'Texas',
-        country: 'US',
-      });
-      setPickupLoc({
-        name: 'Waco, TX',
-        formatted_address: 'Waco, McLennan County, Texas, United States',
-        latitude: 31.5493,
-        longitude: -97.1467,
-        city: 'Waco',
-        state: 'Texas',
-        country: 'US',
-      });
-      setDropoffLoc({
-        name: 'Chicago, IL',
-        formatted_address: 'Chicago, Cook County, Illinois, United States',
-        latitude: 41.8781,
-        longitude: -87.6298,
-        city: 'Chicago',
-        state: 'Illinois',
-        country: 'US',
-      });
-      setCycleUsed(14.0);
-    } else if (presetType === 'cross_country') {
-      setCurrentLoc({
-        name: 'Los Angeles, CA',
-        formatted_address: 'Los Angeles, Los Angeles County, California, United States',
-        latitude: 34.0522,
-        longitude: -118.2437,
-        city: 'Los Angeles',
-        state: 'California',
-        country: 'US',
-      });
-      setPickupLoc({
-        name: 'Phoenix, AZ',
-        formatted_address: 'Phoenix, Maricopa County, Arizona, United States',
-        latitude: 33.4484,
-        longitude: -112.0740,
-        city: 'Phoenix',
-        state: 'Arizona',
-        country: 'US',
-      });
-      setDropoffLoc({
-        name: 'Dallas, TX',
-        formatted_address: 'Dallas, Dallas County, Texas, United States',
-        latitude: 32.7767,
-        longitude: -96.7970,
-        city: 'Dallas',
-        state: 'Texas',
-        country: 'US',
-      });
-      setCycleUsed(8.5);
-    } else {
-      setCurrentLoc({
-        name: 'Atlanta, GA',
-        formatted_address: 'Atlanta, Fulton County, Georgia, United States',
-        latitude: 33.7490,
-        longitude: -84.3880,
-        city: 'Atlanta',
-        state: 'Georgia',
-        country: 'US',
-      });
-      setPickupLoc({
-        name: 'Savannah, GA',
-        formatted_address: 'Savannah, Chatham County, Georgia, United States',
-        latitude: 32.0809,
-        longitude: -81.0912,
-        city: 'Savannah',
-        state: 'Georgia',
-        country: 'US',
-      });
-      setDropoffLoc({
-        name: 'Miami, FL',
-        formatted_address: 'Miami, Miami-Dade County, Florida, United States',
-        latitude: 25.7617,
-        longitude: -80.1918,
-        city: 'Miami',
-        state: 'Florida',
-        country: 'US',
-      });
-      setCycleUsed(22.0);
-    }
-  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setValidationError(null);
 
     if (!currentLoc) {
-      setValidationError('Please specify and select a valid Current Location.');
+      setValidationError('Please specify your current starting location.');
       return;
     }
     if (!pickupLoc) {
-      setValidationError('Please specify and select a valid Pickup Location.');
+      setValidationError('Please specify the shipper pickup location.');
       return;
     }
     if (!dropoffLoc) {
-      setValidationError('Please specify and select a valid Dropoff Location.');
-      return;
-    }
-    if (cycleUsed < 0 || cycleUsed > 70) {
-      setValidationError('Current Cycle Used must be between 0.0 and 70.0 hours.');
+      setValidationError('Please specify the receiver dropoff destination.');
       return;
     }
 
@@ -170,48 +105,131 @@ export const TripPlannerForm: React.FC<TripPlannerFormProps> = ({ onPlanTrip, is
     });
   };
 
+  const handleApplyPreset = (presetKey: string) => {
+    if (presetKey === 'chicago') {
+      setCurrentLoc({
+        name: 'Dallas, TX',
+        formatted_address: 'Dallas, Texas, United States',
+        latitude: 32.7767,
+        longitude: -96.797,
+        city: 'Dallas',
+        state: 'TX',
+      });
+      setPickupLoc({
+        name: 'Waco, TX',
+        formatted_address: 'Waco, Texas, United States',
+        latitude: 31.5493,
+        longitude: -97.1467,
+        city: 'Waco',
+        state: 'TX',
+      });
+      setDropoffLoc({
+        name: 'Chicago, IL',
+        formatted_address: 'Chicago, Illinois, United States',
+        latitude: 41.8781,
+        longitude: -87.6298,
+        city: 'Chicago',
+        state: 'IL',
+      });
+      setCycleUsed(15.0);
+    } else if (presetKey === 'cross_country') {
+      setCurrentLoc({
+        name: 'Los Angeles, CA',
+        formatted_address: 'Los Angeles, California, United States',
+        latitude: 34.0522,
+        longitude: -118.2437,
+        city: 'Los Angeles',
+        state: 'CA',
+      });
+      setPickupLoc({
+        name: 'Phoenix, AZ',
+        formatted_address: 'Phoenix, Arizona, United States',
+        latitude: 33.4484,
+        longitude: -112.074,
+        city: 'Phoenix',
+        state: 'AZ',
+      });
+      setDropoffLoc({
+        name: 'Dallas, TX',
+        formatted_address: 'Dallas, Texas, United States',
+        latitude: 32.7767,
+        longitude: -96.797,
+        city: 'Dallas',
+        state: 'TX',
+      });
+      setCycleUsed(42.0);
+    } else if (presetKey === 'florida') {
+      setCurrentLoc({
+        name: 'Atlanta, GA',
+        formatted_address: 'Atlanta, Georgia, United States',
+        latitude: 33.749,
+        longitude: -84.388,
+        city: 'Atlanta',
+        state: 'GA',
+      });
+      setPickupLoc({
+        name: 'Savannah, GA',
+        formatted_address: 'Savannah, Georgia, United States',
+        latitude: 32.0809,
+        longitude: -81.0912,
+        city: 'Savannah',
+        state: 'GA',
+      });
+      setDropoffLoc({
+        name: 'Miami, FL',
+        formatted_address: 'Miami, Florida, United States',
+        latitude: 25.7617,
+        longitude: -80.1918,
+        city: 'Miami',
+        state: 'FL',
+      });
+      setCycleUsed(20.0);
+    }
+    setValidationError(null);
+  };
+
   return (
-    <section id="planner-form-section" className="bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-8 shadow-soft-sm relative overflow-hidden">
-      {/* Preset Quick Actions */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-6 border-b border-slate-100">
+    <section id="planner-form-section" className="bg-white border border-slate-200/90 rounded-3xl p-5 sm:p-8 shadow-soft-sm relative overflow-hidden">
+      {/* Preset Quick Actions Bar */}
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6 pb-6 border-b border-slate-100">
         <div>
           <div className="flex items-center space-x-2.5">
-            <span className="p-2 rounded-xl bg-slate-100 text-slate-900 border border-slate-200">
+            <span className="p-2 rounded-2xl bg-sky-50 text-sky-700 border border-sky-100">
               <Truck className="w-5 h-5" />
             </span>
-            <h2 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
+            <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
               Interstate CMV Trip Planner
             </h2>
           </div>
-          <p className="text-xs sm:text-sm text-slate-500 mt-1.5">
+          <p className="text-xs sm:text-sm text-slate-500 mt-1">
             Configure departure, shipper loading, receiver delivery, and current cycle hours.
           </p>
         </div>
 
-        {/* Quick sample buttons for assessment evaluator */}
-        <div className="flex items-center flex-wrap gap-2 text-xs">
-          <span className="text-slate-500 flex items-center space-x-1 font-medium">
+        {/* Quick sample buttons - Scrollable pill bar on mobile */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0 text-xs">
+          <span className="text-slate-500 flex items-center space-x-1 font-semibold shrink-0">
             <Sparkles className="w-3.5 h-3.5 text-amber-500" />
             <span>Sample Trips:</span>
           </span>
           <button
             type="button"
             onClick={() => handleApplyPreset('chicago')}
-            className="px-3 py-1.5 rounded-lg bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 font-medium transition active:scale-95 shadow-2xs"
+            className="px-3.5 py-2 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 font-semibold whitespace-nowrap transition active:scale-95 shadow-2xs cursor-pointer"
           >
             Dallas → Chicago
           </button>
           <button
             type="button"
             onClick={() => handleApplyPreset('cross_country')}
-            className="px-3 py-1.5 rounded-lg bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 font-medium transition active:scale-95 shadow-2xs"
+            className="px-3.5 py-2 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 font-semibold whitespace-nowrap transition active:scale-95 shadow-2xs cursor-pointer"
           >
             LA → Dallas (1,400+ mi)
           </button>
           <button
             type="button"
             onClick={() => handleApplyPreset('florida')}
-            className="px-3 py-1.5 rounded-lg bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 font-medium transition active:scale-95 shadow-2xs"
+            className="px-3.5 py-2 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 font-semibold whitespace-nowrap transition active:scale-95 shadow-2xs cursor-pointer"
           >
             Atlanta → Miami
           </button>
@@ -219,9 +237,9 @@ export const TripPlannerForm: React.FC<TripPlannerFormProps> = ({ onPlanTrip, is
       </div>
 
       {validationError && (
-        <div className="mb-6 flex items-start space-x-2.5 p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs animate-slide-up">
-          <AlertCircle className="w-4 h-4 shrink-0 text-rose-500 mt-0.5" />
-          <span className="font-medium">{validationError}</span>
+        <div className="mb-6 flex items-start space-x-2.5 p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-700 text-xs sm:text-sm animate-slide-up">
+          <AlertCircle className="w-5 h-5 shrink-0 text-rose-500 mt-0.5" />
+          <span className="font-semibold">{validationError}</span>
         </div>
       )}
 
@@ -260,11 +278,11 @@ export const TripPlannerForm: React.FC<TripPlannerFormProps> = ({ onPlanTrip, is
         <CycleHoursInput value={cycleUsed} onChange={setCycleUsed} />
 
         {/* Action Bar */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-5 border-t border-slate-100">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-5 border-t border-slate-100">
           <button
             type="button"
             onClick={() => setIsAdvancedOpen(true)}
-            className="w-full sm:w-auto flex items-center justify-center space-x-2 px-4 py-2.5 rounded-xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 text-xs font-semibold shadow-2xs transition"
+            className="w-full sm:w-auto flex items-center justify-center space-x-2 px-4 py-3 rounded-2xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 text-xs font-semibold shadow-2xs transition active:scale-98 cursor-pointer"
           >
             <Sliders className="w-4 h-4 text-slate-500" />
             <span>Advanced Details (Start Time, Carrier, Driver)</span>
@@ -273,10 +291,10 @@ export const TripPlannerForm: React.FC<TripPlannerFormProps> = ({ onPlanTrip, is
           <button
             type="submit"
             disabled={isLoading}
-            className={`w-full sm:w-auto flex items-center justify-center space-x-2 px-7 py-3 rounded-xl font-bold text-sm shadow-soft-sm transition-all ${
+            className={`w-full sm:w-auto flex items-center justify-center space-x-2 px-8 py-3.5 rounded-2xl font-bold text-sm shadow-md transition-all cursor-pointer ${
               isLoading
                 ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
-                : 'bg-slate-900 hover:bg-slate-800 text-white shadow-soft-sm active:scale-[0.99]'
+                : 'bg-slate-900 hover:bg-slate-800 text-white shadow-slate-900/10 active:scale-[0.98]'
             }`}
           >
             <Navigation className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
