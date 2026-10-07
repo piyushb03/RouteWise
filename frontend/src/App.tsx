@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { TripPlanResponse, Location, AdvancedTripSettings } from './types/trip';
 import { planTrip } from './services/api';
+import { useTheme } from './context/ThemeContext';
 import { Navbar } from './components/common/Navbar';
 import { Footer } from './components/common/Footer';
 import { TripPlannerForm } from './components/trip/TripPlannerForm';
@@ -13,6 +14,7 @@ import { DailyLogViewer } from './components/logs/DailyLogViewer';
 import { Loader2, AlertCircle, Shield, Clock, Fuel, FileSpreadsheet, ArrowDown } from 'lucide-react';
 
 export const App: React.FC = () => {
+  const { theme } = useTheme();
   const [planResult, setPlanResult] = useState<TripPlanResponse | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [loadingStep, setLoadingStep] = useState('Initiating trip calculation...');
@@ -86,7 +88,7 @@ export const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col font-sans transition-colors selection:bg-slate-900 selection:text-white dark:selection:bg-sky-500 dark:selection:text-slate-950">
+    <div className={`min-h-screen ${theme === 'dark' ? 'dark bg-slate-950 text-slate-100' : 'bg-slate-50 text-slate-900'} flex flex-col font-sans transition-colors selection:bg-slate-900 selection:text-white dark:selection:bg-sky-500 dark:selection:text-slate-950`}>
       {/* Navigation */}
       <Navbar hasResults={!!planResult} onScrollTo={handleScrollTo} />
 
