@@ -41,11 +41,11 @@ export const CycleHoursInput: React.FC<CycleHoursInputProps> = ({ value, onChang
 
   return (
     <div className="space-y-4 bg-slate-50/80 p-4 sm:p-6 rounded-3xl border border-slate-200/90 shadow-2xs">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-        <label htmlFor="cycle-hours-input" className="block text-xs font-bold text-slate-800 tracking-wide uppercase">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 sm:gap-2">
+        <label htmlFor="cycle-hours-input" className="block text-xs font-bold text-slate-800 tracking-normal">
           Current 70/8 Cycle Used <span className="text-rose-500">*</span>
         </label>
-        <span className="text-xs font-mono font-semibold text-slate-500 bg-white px-3 py-1 rounded-full border border-slate-200 shadow-2xs inline-block self-start sm:self-auto">
+        <span className="text-[11px] sm:text-xs font-mono font-semibold text-slate-500 bg-white px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full border border-slate-200 shadow-2xs inline-block self-start sm:self-auto">
           70.0 hrs / 8-day rolling limit
         </span>
       </div>

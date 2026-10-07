@@ -86,7 +86,7 @@ export const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans selection:bg-sky-600 selection:text-white pb-24 md:pb-8">
+    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col font-sans selection:bg-sky-600 selection:text-white pb-36 sm:pb-16 md:pb-10">
       {/* Navigation */}
       <Navbar hasResults={!!planResult} onScrollTo={handleScrollTo} />
 
@@ -98,27 +98,27 @@ export const App: React.FC = () => {
             <div className="absolute top-0 right-0 w-72 sm:w-96 h-72 sm:h-96 bg-gradient-to-br from-sky-400/10 via-blue-500/5 to-transparent rounded-full blur-3xl pointer-events-none"></div>
             <div className="absolute bottom-0 left-0 w-60 h-60 bg-gradient-to-tr from-indigo-500/5 to-transparent rounded-full blur-2xl pointer-events-none"></div>
 
-            <div className="relative z-10 space-y-5 sm:space-y-6">
+            <div className="relative z-10 space-y-4 sm:space-y-6">
               {/* Live Badge Bar */}
               <div className="flex flex-wrap items-center gap-2">
-                <span className="inline-flex items-center space-x-2 px-3 py-1 rounded-full text-xs font-semibold bg-slate-100/90 text-slate-800 border border-slate-200 shadow-2xs">
-                  <span className="relative flex h-2 w-2">
+                <span className="inline-flex items-center space-x-2 px-2.5 sm:px-3 py-1 rounded-full text-[11px] sm:text-xs font-semibold bg-slate-100/90 text-slate-800 border border-slate-200 shadow-2xs">
+                  <span className="relative flex h-2 w-2 shrink-0">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                     <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                   </span>
-                  <Shield className="w-3.5 h-3.5 text-sky-600" />
-                  <span>FMCSA 49 CFR Part 395 Specification</span>
+                  <Shield className="w-3.5 h-3.5 text-sky-600 shrink-0" />
+                  <span>FMCSA Part 395 Compliant</span>
                 </span>
-                <span className="inline-flex items-center space-x-1 text-xs font-mono text-slate-500">
-                  <span className="hidden sm:inline">·</span>
+                <span className="hidden sm:inline-flex items-center space-x-1 text-xs font-mono text-slate-500">
+                  <span>·</span>
                   <span>70h / 8-Day Property-Carrying Standard</span>
                 </span>
               </div>
 
               {/* Headline & CTA */}
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-end">
-                <div className="lg:col-span-8 space-y-3">
-                  <h1 className="text-2xl xs:text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-slate-900 leading-[1.12]">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 items-end">
+                <div className="lg:col-span-8 space-y-2.5 sm:space-y-3">
+                  <h1 className="text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-slate-900 leading-snug sm:leading-tight">
                     Commercial CMV Route Planning &{' '}
                     <span className="bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600 bg-clip-text text-transparent">
                       FMCSA ELD Daily Log
@@ -135,7 +135,7 @@ export const App: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => handleScrollTo('planner-form-section')}
-                    className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-6 py-3.5 rounded-2xl bg-slate-900 text-white font-bold text-xs sm:text-sm tracking-wide shadow-md shadow-slate-900/10 hover:bg-slate-800 transition active:scale-[0.98] cursor-pointer"
+                    className="w-full sm:w-auto inline-flex items-center justify-center space-x-2 px-5 py-3 sm:px-6 sm:py-3.5 rounded-2xl bg-slate-900 text-white font-bold text-xs sm:text-sm tracking-wide shadow-md shadow-slate-900/10 hover:bg-slate-800 transition active:scale-[0.98] cursor-pointer"
                   >
                     <span>Configure Trip Waypoints</span>
                     <ArrowDown className="w-4 h-4 animate-bounce" />

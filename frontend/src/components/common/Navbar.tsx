@@ -36,7 +36,7 @@ export const Navbar: React.FC<NavbarProps> = ({ hasResults, onScrollTo }) => {
                   <span className="text-xl sm:text-2xl font-black tracking-tight text-slate-900 font-sans">
                     Route<span className="text-sky-600">Wise</span>
                   </span>
-                  <span className="text-[10px] uppercase font-extrabold tracking-wider px-2 py-0.5 rounded-full bg-sky-50 text-sky-700 border border-sky-200">
+                  <span className="hidden sm:inline-flex text-[10px] uppercase font-extrabold tracking-wider px-2 py-0.5 rounded-full bg-sky-50 text-sky-700 border border-sky-200">
                     HOS · ELD
                   </span>
                 </div>
@@ -89,10 +89,15 @@ export const Navbar: React.FC<NavbarProps> = ({ hasResults, onScrollTo }) => {
 
             {/* Right Status Pill + Mobile Menu Toggle */}
             <div className="flex items-center space-x-2 sm:space-x-3">
-              <div className="flex items-center space-x-2 bg-emerald-50 border border-emerald-200 rounded-full px-3 py-1 text-xs text-emerald-800 font-semibold shadow-2xs">
+              <div className="hidden sm:flex items-center space-x-2 bg-emerald-50 border border-emerald-200 rounded-full px-3 py-1 text-xs text-emerald-800 font-semibold shadow-2xs">
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span className="font-mono text-[11px] hidden xs:inline">FMCSA 70/8 Property</span>
-                <span className="font-mono text-[11px] xs:hidden">FMCSA Active</span>
+                <span className="font-mono text-[11px]">FMCSA 70/8 Property</span>
+              </div>
+
+              {/* Compact live status indicator for mobile */}
+              <div className="sm:hidden flex items-center space-x-1.5 bg-emerald-50/80 border border-emerald-200/80 rounded-full px-2.5 py-1 text-[11px] text-emerald-800 font-semibold">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span>Active</span>
               </div>
 
               {hasResults && (
@@ -157,39 +162,39 @@ export const Navbar: React.FC<NavbarProps> = ({ hasResults, onScrollTo }) => {
       {hasResults && (
         <aside
           aria-label="Mobile Bottom Navigation"
-          className="fixed bottom-3 inset-x-3 z-50 md:hidden bg-white/95 backdrop-blur-xl border border-slate-200/90 shadow-xl rounded-2xl p-1.5 flex items-center justify-around animate-slide-up"
+          className="fixed bottom-2.5 inset-x-3 z-40 md:hidden bg-white/95 backdrop-blur-xl border border-slate-200/90 shadow-xl shadow-slate-900/10 rounded-2xl py-1 px-1 flex items-center justify-around animate-slide-up"
         >
           <button
             onClick={() => onScrollTo('hos-dashboard-section')}
-            className="flex-1 py-1.5 px-1 flex flex-col items-center justify-center text-[10px] font-semibold text-slate-700 hover:text-sky-600 active:scale-95 transition"
+            className="flex-1 py-1 px-0.5 flex flex-col items-center justify-center text-[10px] font-semibold text-slate-700 hover:text-sky-600 active:scale-95 transition cursor-pointer"
           >
             <Clock className="w-4 h-4 text-teal-600 mb-0.5" />
             <span>HOS</span>
           </button>
           <button
             onClick={() => onScrollTo('map-section')}
-            className="flex-1 py-1.5 px-1 flex flex-col items-center justify-center text-[10px] font-semibold text-slate-700 hover:text-sky-600 active:scale-95 transition"
+            className="flex-1 py-1 px-0.5 flex flex-col items-center justify-center text-[10px] font-semibold text-slate-700 hover:text-sky-600 active:scale-95 transition cursor-pointer"
           >
             <MapPin className="w-4 h-4 text-sky-600 mb-0.5" />
             <span>Map</span>
           </button>
           <button
             onClick={() => onScrollTo('logs-section')}
-            className="flex-1 py-1.5 px-1 flex flex-col items-center justify-center text-[10px] font-semibold text-slate-700 hover:text-sky-600 active:scale-95 transition"
+            className="flex-1 py-1 px-0.5 flex flex-col items-center justify-center text-[10px] font-semibold text-slate-700 hover:text-sky-600 active:scale-95 transition cursor-pointer"
           >
             <FileText className="w-4 h-4 text-indigo-600 mb-0.5" />
             <span>Logs</span>
           </button>
           <button
             onClick={() => onScrollTo('timeline-section')}
-            className="flex-1 py-1.5 px-1 flex flex-col items-center justify-center text-[10px] font-semibold text-slate-700 hover:text-sky-600 active:scale-95 transition"
+            className="flex-1 py-1 px-0.5 flex flex-col items-center justify-center text-[10px] font-semibold text-slate-700 hover:text-sky-600 active:scale-95 transition cursor-pointer"
           >
             <Compass className="w-4 h-4 text-amber-600 mb-0.5" />
             <span>Stops</span>
           </button>
           <button
             onClick={() => onScrollTo('compliance-panel-section')}
-            className="flex-1 py-1.5 px-1 flex flex-col items-center justify-center text-[10px] font-semibold text-slate-700 hover:text-emerald-700 active:scale-95 transition"
+            className="flex-1 py-1 px-0.5 flex flex-col items-center justify-center text-[10px] font-semibold text-slate-700 hover:text-emerald-700 active:scale-95 transition cursor-pointer"
           >
             <ShieldCheck className="w-4 h-4 text-emerald-600 mb-0.5" />
             <span>Audit</span>

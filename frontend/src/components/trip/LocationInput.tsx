@@ -127,14 +127,15 @@ export const LocationInput: React.FC<LocationInputProps> = ({
 
   return (
     <div ref={containerRef} className="relative space-y-1.5">
-      <div className="flex items-center justify-between">
-        <label htmlFor={id} className="block text-xs font-bold text-slate-800 tracking-wide uppercase">
+      <div className="flex items-center justify-between gap-2">
+        <label htmlFor={id} className="block text-xs font-bold text-slate-800 tracking-normal truncate">
           {label} {required && <span className="text-rose-500">*</span>}
         </label>
         {value && (
-          <span className="inline-flex items-center space-x-1 text-[11px] text-emerald-800 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full font-medium shadow-2xs">
-            <CheckCircle2 className="w-3 h-3 text-emerald-600" />
-            <span className="font-mono text-[10px]">{value.latitude.toFixed(2)}, {value.longitude.toFixed(2)}</span>
+          <span className="shrink-0 inline-flex items-center space-x-1 text-[11px] text-emerald-800 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full font-medium shadow-2xs">
+            <CheckCircle2 className="w-3 h-3 text-emerald-600 shrink-0" />
+            <span className="font-mono text-[10px] hidden sm:inline">{value.latitude.toFixed(2)}, {value.longitude.toFixed(2)}</span>
+            <span className="text-[10px] font-semibold sm:hidden">Selected</span>
           </span>
         )}
       </div>
@@ -155,22 +156,25 @@ export const LocationInput: React.FC<LocationInputProps> = ({
           }}
           placeholder={placeholder}
           autoComplete="off"
-          className={`w-full pl-10 pr-10 h-12 text-sm sm:text-base bg-white border rounded-2xl placeholder-slate-400 focus:outline-none transition shadow-2xs ${
-            value
-              ? 'border-emerald-500 ring-2 ring-emerald-500/10'
-              : errorMsg
+          className={`w-full pl-10 pr-12 h-12 text-sm sm:text-base bg-white border rounded-2xl placeholder-slate-400 focus:outline-none transition shadow-2xs ${
+            errorMsg
               ? 'border-rose-400 ring-2 ring-rose-400/10'
-              : 'border-slate-300 hover:border-slate-400 focus:border-sky-600 focus:ring-2 focus:ring-sky-600/10'
+              : 'border-slate-300 hover:border-slate-400 focus:border-sky-600 focus:ring-2 focus:ring-sky-600/15'
           }`}
         />
 
         <div className="absolute inset-y-0 right-0 pr-2.5 flex items-center space-x-1">
           {isLoading && <Loader2 className="w-4 h-4 text-slate-500 animate-spin mr-1" />}
+          {value && !isLoading && (
+            <span className="text-emerald-600 p-1" title="Location coordinates verified">
+              <CheckCircle2 className="w-4 h-4" />
+            </span>
+          )}
           {inputText && !isLoading && (
             <button
               type="button"
               onClick={handleClear}
-              className="text-slate-400 hover:text-slate-700 p-2 rounded-xl hover:bg-slate-100 transition cursor-pointer"
+              className="text-slate-400 hover:text-slate-700 p-1.5 rounded-xl hover:bg-slate-100 transition cursor-pointer"
               aria-label={`Clear ${label}`}
             >
               <X className="w-4 h-4" />

@@ -63,6 +63,13 @@
   .glass-header {
     @apply bg-white/85 backdrop-blur-xl border-b border-slate-200/80;
   }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 }
 
 /* Respect user's motion preferences */

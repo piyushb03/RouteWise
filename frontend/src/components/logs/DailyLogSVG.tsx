@@ -18,9 +18,9 @@ export const DailyLogSVG: React.FC<DailyLogSVGProps> = ({ log }) => {
   const svgWidth = 980;
   const svgHeight = 670;
 
-  const gridLeft = 140;
-  const gridRight = 890;
-  const gridWidth = gridRight - gridLeft; // 750px for 24 hours -> 31.25px per hour
+  const gridLeft = 148;
+  const gridRight = 868;
+  const gridWidth = gridRight - gridLeft; // 720px for 24 hours -> exactly 30.0px per hour
   const gridTop = 192;
   const rowHeight = 24;
   const numRows = 4;
@@ -160,10 +160,33 @@ export const DailyLogSVG: React.FC<DailyLogSVGProps> = ({ log }) => {
         <line x1="440" y1="146" x2="955" y2="146" stroke="#000000" strokeWidth="0.75" />
 
         {/* ================= 24-HOUR GRID ================= */}
-        {/* Black Header Banner (Starts at y = 170, safely below Home Terminal Address at y = 146) */}
-        <rect x={gridLeft} y={gridTop - 22} width={gridWidth} height="22" fill="#000000" />
-        <rect x={gridRight + 5} y={gridTop - 22} width="60" height="22" fill="#000000" />
-        <text x={gridRight + 35} y={gridTop - 8} fontSize="9" fontWeight="bold" fill="#ffffff" textAnchor="middle">
+        {/* Black Header Banner (covers from gridLeft - 22 to gridRight + 20 to fully encapsulate Midnight labels) */}
+        <rect
+          x={gridLeft - 22}
+          y={gridTop - 22}
+          width={gridWidth + 42}
+          height="22"
+          fill="#000000"
+          rx="2"
+        />
+
+        {/* Total Hours Header Box */}
+        <rect
+          x="898"
+          y={gridTop - 22}
+          width="68"
+          height="22"
+          fill="#000000"
+          rx="2"
+        />
+        <text
+          x="932"
+          y={gridTop - 7}
+          fontSize="9"
+          fontWeight="bold"
+          fill="#ffffff"
+          textAnchor="middle"
+        >
           Total Hours
         </text>
 
@@ -171,9 +194,9 @@ export const DailyLogSVG: React.FC<DailyLogSVGProps> = ({ log }) => {
         {Array.from({ length: 25 }).map((_, h) => {
           const x = gridLeft + (h / 24.0) * gridWidth;
           let label = `${h}`;
-          if (h === 0) label = 'Mid-night';
+          if (h === 0) label = 'Midnight';
           else if (h === 12) label = 'Noon';
-          else if (h === 24) label = 'Mid-night';
+          else if (h === 24) label = 'Midnight';
           else if (h > 12) label = `${h - 12}`;
 
           return (
@@ -213,7 +236,7 @@ export const DailyLogSVG: React.FC<DailyLogSVGProps> = ({ log }) => {
           return (
             <g key={r.idx}>
               {/* Row Label (left) */}
-              <text x="25" y={y + 16} fontSize="10.5" fontWeight="bold" fill="#000000">
+              <text x="16" y={y + 16} fontSize="10" fontWeight="bold" fill="#000000">
                 {r.label}
               </text>
               {/* Horizontal Row Divider */}
@@ -276,33 +299,33 @@ export const DailyLogSVG: React.FC<DailyLogSVGProps> = ({ log }) => {
         <line x1={gridRight} y1={gridTop} x2={gridRight} y2={gridBottom} stroke="#000000" strokeWidth="1.5" />
 
         {/* Right Totals Values for lines 1, 2, 3, 4 */}
-        <g transform={`translate(${gridRight + 10}, ${gridTop})`}>
+        <g transform={`translate(932, ${gridTop})`}>
           {/* Row 1 total */}
-          <text x="25" y="17" fontSize="12" fontWeight="bold" textAnchor="middle" fill="#000000">
+          <text x="0" y="17" fontSize="12" fontWeight="bold" textAnchor="middle" fill="#000000">
             {log.hours_off_duty.toFixed(2)}
           </text>
-          <line x1="5" y1="22" x2="45" y2="22" stroke="#000000" strokeWidth="1" />
+          <line x1="-22" y1="22" x2="22" y2="22" stroke="#000000" strokeWidth="1" />
 
           {/* Row 2 total */}
-          <text x="25" y="41" fontSize="12" fontWeight="bold" textAnchor="middle" fill="#000000">
+          <text x="0" y="41" fontSize="12" fontWeight="bold" textAnchor="middle" fill="#000000">
             {log.hours_sleeper_berth.toFixed(2)}
           </text>
-          <line x1="5" y1="46" x2="45" y2="46" stroke="#000000" strokeWidth="1" />
+          <line x1="-22" y1="46" x2="22" y2="46" stroke="#000000" strokeWidth="1" />
 
           {/* Row 3 total */}
-          <text x="25" y="65" fontSize="12" fontWeight="bold" textAnchor="middle" fill="#000000">
+          <text x="0" y="65" fontSize="12" fontWeight="bold" textAnchor="middle" fill="#000000">
             {log.hours_driving.toFixed(2)}
           </text>
-          <line x1="5" y1="70" x2="45" y2="70" stroke="#000000" strokeWidth="1" />
+          <line x1="-22" y1="70" x2="22" y2="70" stroke="#000000" strokeWidth="1" />
 
           {/* Row 4 total */}
-          <text x="25" y="89" fontSize="12" fontWeight="bold" textAnchor="middle" fill="#000000">
+          <text x="0" y="89" fontSize="12" fontWeight="bold" textAnchor="middle" fill="#000000">
             {log.hours_on_duty_not_driving.toFixed(2)}
           </text>
-          <line x1="5" y1="94" x2="45" y2="94" stroke="#000000" strokeWidth="1" />
+          <line x1="-22" y1="94" x2="22" y2="94" stroke="#000000" strokeWidth="1" />
 
           {/* Total Sum (24.0) */}
-          <text x="25" y="112" fontSize="11" fontWeight="900" textAnchor="middle" fill="#000000">
+          <text x="0" y="112" fontSize="11" fontWeight="900" textAnchor="middle" fill="#000000">
             = {log.total_hours.toFixed(2)}
           </text>
         </g>
