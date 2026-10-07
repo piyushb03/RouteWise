@@ -447,15 +447,15 @@ export const DailyLogSVG: React.FC<DailyLogSVGProps> = ({ log }) => {
       </svg>
 
       {/* Interactive signature control below SVG in browser view */}
-      <div className="no-print mt-3 pt-3 border-t border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row items-start sm:items-center justify-between text-xs text-slate-500 dark:text-slate-400 gap-2">
+      <div className="no-print mt-3 pt-3 border-t border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between text-xs text-slate-500 gap-2">
         <div className="flex items-center space-x-2">
-          <span className="font-semibold text-slate-700 dark:text-slate-300">Driver Signature:</span>
+          <span className="font-semibold text-slate-700">Driver Signature:</span>
           <input
             type="text"
             placeholder="Driver full name"
             value={typedSignature}
             onChange={(e) => setTypedSignature(e.target.value)}
-            className="px-2.5 py-1 border border-slate-300 dark:border-slate-600 rounded text-xs text-black dark:text-white bg-white dark:bg-slate-800 focus:outline-none focus:ring-1 focus:ring-sky-500 font-medium"
+            className="px-2.5 py-1 border border-slate-300 rounded text-xs text-slate-900 bg-white focus:outline-none focus:ring-1 focus:ring-slate-900 font-medium"
           />
         </div>
         <span className="text-[11px] text-slate-400">

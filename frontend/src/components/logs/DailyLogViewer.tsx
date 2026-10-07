@@ -32,20 +32,20 @@ export const DailyLogViewer: React.FC<DailyLogViewerProps> = ({ logs }) => {
   };
 
   return (
-    <section id="logs-section" className="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-3xl p-6 sm:p-8 shadow-soft-sm dark:shadow-dark-md space-y-6 transition-colors">
+    <section id="logs-section" className="bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-8 shadow-soft-sm space-y-6">
       {/* Top Header & Day Navigation Bar */}
-      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 pb-6 border-b border-slate-100 dark:border-slate-800">
+      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 pb-6 border-b border-slate-100">
         <div>
           <div className="flex items-center space-x-2.5">
-            <span className="p-2 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-800/80">
+            <span className="p-2 rounded-xl bg-indigo-50 text-indigo-700 border border-indigo-100">
               <FileText className="w-5 h-5" />
             </span>
-            <h3 className="text-xl font-bold text-slate-900 dark:text-white tracking-tight">FMCSA 24-Hour Driver Daily Log Sheets</h3>
-            <span className="text-xs font-mono font-semibold px-2.5 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950/50 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800/80">
+            <h3 className="text-xl font-bold text-slate-900 tracking-tight">FMCSA 24-Hour Driver Daily Log Sheets</h3>
+            <span className="text-xs font-mono font-semibold px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200">
               {logs.length} {logs.length === 1 ? 'Sheet' : 'Sheets'}
             </span>
           </div>
-          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1.5">
+          <p className="text-xs sm:text-sm text-slate-500 mt-1.5">
             Exact vector SVG grid drawings with 24.0-hour totals and status transitions. Letter landscape ready.
           </p>
         </div>
@@ -53,27 +53,27 @@ export const DailyLogViewer: React.FC<DailyLogViewerProps> = ({ logs }) => {
         {/* Action Buttons: Print & Download */}
         <div className="no-print flex flex-wrap items-center gap-2">
           {/* Zoom controls */}
-          <div className="flex items-center space-x-1 bg-slate-50 dark:bg-slate-800 p-1 rounded-xl border border-slate-200 dark:border-slate-700">
+          <div className="flex items-center space-x-1 bg-slate-50 p-1 rounded-xl border border-slate-200">
             <button
               onClick={() => setZoomLevel((z) => Math.max(0.7, z - 0.1))}
-              className="p-1.5 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white rounded-lg hover:bg-slate-200/60 dark:hover:bg-slate-700 transition"
+              className="p-1.5 text-slate-600 hover:text-slate-900 rounded-lg hover:bg-slate-200/60 transition"
               title="Zoom Out"
             >
               <ZoomOut className="w-4 h-4" />
             </button>
-            <span className="text-[11px] font-mono text-slate-700 dark:text-slate-300 px-1 font-semibold">
+            <span className="text-[11px] font-mono text-slate-700 px-1 font-semibold">
               {Math.round(zoomLevel * 100)}%
             </span>
             <button
               onClick={() => setZoomLevel((z) => Math.min(1.4, z + 0.1))}
-              className="p-1.5 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white rounded-lg hover:bg-slate-200/60 dark:hover:bg-slate-700 transition"
+              className="p-1.5 text-slate-600 hover:text-slate-900 rounded-lg hover:bg-slate-200/60 transition"
               title="Zoom In"
             >
               <ZoomIn className="w-4 h-4" />
             </button>
             <button
               onClick={() => setZoomLevel(1.0)}
-              className="p-1.5 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white rounded-lg hover:bg-slate-200/60 dark:hover:bg-slate-700 transition"
+              className="p-1.5 text-slate-600 hover:text-slate-900 rounded-lg hover:bg-slate-200/60 transition"
               title="Reset Zoom"
             >
               <RotateCcw className="w-3.5 h-3.5" />
@@ -82,9 +82,9 @@ export const DailyLogViewer: React.FC<DailyLogViewerProps> = ({ logs }) => {
 
           <button
             onClick={handlePrintCurrent}
-            className="flex items-center space-x-1.5 px-3.5 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-semibold rounded-xl border border-slate-200 dark:border-slate-700 transition shadow-2xs"
+            className="flex items-center space-x-1.5 px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-semibold rounded-xl border border-slate-200 transition shadow-2xs"
           >
-            <Printer className="w-3.5 h-3.5 text-slate-600 dark:text-slate-400" />
+            <Printer className="w-3.5 h-3.5 text-slate-600" />
             <span>Print Sheet (Day {currentLog.day_number})</span>
           </button>
 
@@ -100,7 +100,7 @@ export const DailyLogViewer: React.FC<DailyLogViewerProps> = ({ logs }) => {
 
           <button
             onClick={handlePrintCurrent}
-            className="flex items-center space-x-1.5 px-3.5 py-2 bg-slate-900 hover:bg-slate-800 dark:bg-sky-600 dark:hover:bg-sky-500 text-white text-xs font-semibold rounded-xl shadow-soft-sm transition"
+            className="flex items-center space-x-1.5 px-3.5 py-2 bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold rounded-xl shadow-soft-sm transition"
             title="Export as vector PDF via system print dialog"
           >
             <Download className="w-3.5 h-3.5" />
@@ -111,7 +111,7 @@ export const DailyLogViewer: React.FC<DailyLogViewerProps> = ({ logs }) => {
 
       {/* Day Selector Tabs (if multi-day trip) */}
       {logs.length > 1 && (
-        <div className="no-print flex items-center justify-between bg-slate-50 dark:bg-slate-800 p-1.5 rounded-xl border border-slate-200 dark:border-slate-700">
+        <div className="no-print flex items-center justify-between bg-slate-50 p-1.5 rounded-xl border border-slate-200">
           <div className="flex items-center space-x-1 overflow-x-auto py-0.5">
             {logs.map((lg, idx) => (
               <button
@@ -119,8 +119,8 @@ export const DailyLogViewer: React.FC<DailyLogViewerProps> = ({ logs }) => {
                 onClick={() => setActiveDayIdx(idx)}
                 className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition flex items-center space-x-1.5 ${
                   activeDayIdx === idx
-                    ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-soft-sm border border-slate-200 dark:border-slate-600'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800/80'
+                    ? 'bg-white text-slate-900 shadow-soft-sm border border-slate-200'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
                 }`}
               >
                 <span>Day {lg.day_number}</span>
@@ -133,7 +133,7 @@ export const DailyLogViewer: React.FC<DailyLogViewerProps> = ({ logs }) => {
             <button
               disabled={activeDayIdx === 0}
               onClick={() => setActiveDayIdx((i) => Math.max(0, i - 1))}
-              className="p-1.5 rounded-lg bg-white dark:bg-slate-700 hover:bg-slate-100 dark:hover:bg-slate-600 border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 disabled:opacity-30 disabled:pointer-events-none transition"
+              className="p-1.5 rounded-lg bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 disabled:opacity-30 disabled:pointer-events-none transition"
               title="Previous Day"
             >
               <ChevronLeft className="w-4 h-4" />
@@ -141,7 +141,7 @@ export const DailyLogViewer: React.FC<DailyLogViewerProps> = ({ logs }) => {
             <button
               disabled={activeDayIdx === logs.length - 1}
               onClick={() => setActiveDayIdx((i) => Math.min(logs.length - 1, i + 1))}
-              className="p-1.5 rounded-lg bg-white dark:bg-slate-700 hover:bg-slate-100 dark:hover:bg-slate-600 border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 disabled:opacity-30 disabled:pointer-events-none transition"
+              className="p-1.5 rounded-lg bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 disabled:opacity-30 disabled:pointer-events-none transition"
               title="Next Day"
             >
               <ChevronRight className="w-4 h-4" />
@@ -151,7 +151,7 @@ export const DailyLogViewer: React.FC<DailyLogViewerProps> = ({ logs }) => {
       )}
 
       {/* Screen Log Viewer Preview Area */}
-      <div className="no-print overflow-x-auto p-4 sm:p-6 bg-slate-100/70 dark:bg-slate-950/70 rounded-2xl border border-slate-200/90 dark:border-slate-800/90 flex justify-center shadow-inner">
+      <div className="no-print overflow-x-auto p-4 sm:p-6 bg-slate-100/70 rounded-2xl border border-slate-200/90 flex justify-center shadow-inner">
         <div
           style={{
             transform: `scale(${zoomLevel})`,
