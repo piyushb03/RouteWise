@@ -498,8 +498,8 @@ export const RouteMap: React.FC<RouteMapProps> = ({ route, stops }) => {
           </div>
         </div>
 
-        {/* FULL-WIDTH TALL INTERACTIVE MAP (Placed BELOW route details) */}
-        <div className="w-full h-[520px] sm:h-[620px] lg:h-[720px] min-h-[500px] rounded-2xl overflow-hidden border border-slate-200 shadow-inner relative flex flex-col">
+        {/* FULL-WIDTH INTERACTIVE MAP (Sized to fit screen viewport comfortably) */}
+        <div className="w-full h-[380px] sm:h-[440px] lg:h-[480px] rounded-2xl overflow-hidden border border-slate-200 shadow-inner relative flex flex-col">
           {renderMap(false)}
         </div>
       </section>
