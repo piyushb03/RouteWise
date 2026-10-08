@@ -10,6 +10,9 @@ interface LocationInputProps {
   onChange: (loc: Location | null) => void;
   placeholder?: string;
   required?: boolean;
+  stepType?: 'start' | 'pickup' | 'dropoff';
+  stepTag?: string;
+  subtitle?: string;
 }
 
 export const LocationInput: React.FC<LocationInputProps> = ({
@@ -19,6 +22,9 @@ export const LocationInput: React.FC<LocationInputProps> = ({
   onChange,
   placeholder = 'Search city, state, or address...',
   required = true,
+  stepType = 'start',
+  stepTag,
+  subtitle,
 }) => {
   const [inputText, setInputText] = useState(value ? value.name : '');
   const [suggestions, setSuggestions] = useState<Location[]>([]);
@@ -126,23 +132,38 @@ export const LocationInput: React.FC<LocationInputProps> = ({
   };
 
   return (
-    <div ref={containerRef} className="relative space-y-1.5">
+    <div ref={containerRef} className="relative bg-slate-50/80 p-3.5 sm:p-4 rounded-2xl border border-slate-200/90 hover:border-slate-300 transition-all space-y-2.5">
       <div className="flex items-center justify-between gap-2">
-        <label htmlFor={id} className="block text-xs font-bold text-slate-800 tracking-normal truncate">
-          {label} {required && <span className="text-rose-500">*</span>}
-        </label>
+        <div className="flex items-center space-x-2 min-w-0">
+          {stepTag && (
+            <span className={`px-2 py-0.5 rounded-lg text-[10px] font-extrabold uppercase tracking-wider shrink-0 ${
+              stepType === 'start' ? 'bg-emerald-100 text-emerald-800 border border-emerald-200/80' :
+              stepType === 'pickup' ? 'bg-sky-100 text-sky-800 border border-sky-200/80' :
+              'bg-indigo-100 text-indigo-800 border border-indigo-200/80'
+            }`}>
+              {stepTag}
+            </span>
+          )}
+          <label htmlFor={id} className="block text-xs font-bold text-slate-800 tracking-normal truncate">
+            {label} {required && <span className="text-rose-500">*</span>}
+          </label>
+        </div>
+
         {value && (
-          <span className="shrink-0 inline-flex items-center space-x-1 text-[11px] text-emerald-800 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full font-medium shadow-2xs">
+          <span className="shrink-0 inline-flex items-center space-x-1 text-[11px] text-emerald-800 bg-white border border-emerald-200 px-2 py-0.5 rounded-full font-medium shadow-2xs">
             <CheckCircle2 className="w-3 h-3 text-emerald-600 shrink-0" />
             <span className="font-mono text-[10px] hidden sm:inline">{value.latitude.toFixed(2)}, {value.longitude.toFixed(2)}</span>
-            <span className="text-[10px] font-semibold sm:hidden">Selected</span>
+            <span className="text-[10px] font-semibold sm:hidden">Set</span>
           </span>
         )}
       </div>
 
       <div className="relative">
         <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-          <MapPin className="w-4 h-4 text-slate-500" />
+          <MapPin className={`w-4 h-4 ${
+            stepType === 'start' ? 'text-emerald-600' :
+            stepType === 'pickup' ? 'text-sky-600' : 'text-indigo-600'
+          }`} />
         </div>
 
         <input
@@ -156,7 +177,7 @@ export const LocationInput: React.FC<LocationInputProps> = ({
           }}
           placeholder={placeholder}
           autoComplete="off"
-          className={`w-full pl-10 pr-12 h-12 text-sm sm:text-base bg-white border rounded-2xl placeholder-slate-400 focus:outline-none transition shadow-2xs ${
+          className={`w-full pl-10 pr-12 h-11 text-sm bg-white border rounded-xl placeholder-slate-400 focus:outline-none transition shadow-2xs font-medium text-slate-900 ${
             errorMsg
               ? 'border-rose-400 ring-2 ring-rose-400/10'
               : 'border-slate-300 hover:border-slate-400 focus:border-sky-600 focus:ring-2 focus:ring-sky-600/15'
@@ -182,6 +203,10 @@ export const LocationInput: React.FC<LocationInputProps> = ({
           )}
         </div>
       </div>
+
+      {subtitle && (
+        <p className="text-[11px] text-slate-400 font-medium px-0.5 truncate">{subtitle}</p>
+      )}
 
       {errorMsg && <p className="text-xs text-rose-600 font-medium px-1">{errorMsg}</p>}
 

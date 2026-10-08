@@ -206,32 +206,35 @@ export const TripPlannerForm: React.FC<TripPlannerFormProps> = ({ onPlanTrip, is
           </p>
         </div>
 
-        {/* Quick sample buttons - Scrollable pill bar on mobile */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0 text-xs no-scrollbar">
+        {/* Quick sample buttons - Responsive flex-wrap */}
+        <div className="flex flex-wrap items-center gap-2 text-xs">
           <span className="text-slate-500 flex items-center space-x-1 font-semibold shrink-0">
             <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-            <span>Sample Routes:</span>
+            <span>Preset Hauls:</span>
           </span>
           <button
             type="button"
             onClick={() => handleApplyPreset('chicago')}
-            className="px-3.5 py-2 rounded-xl bg-slate-50 hover:bg-sky-50 hover:text-sky-800 hover:border-sky-200 text-slate-700 border border-slate-200 font-semibold whitespace-nowrap transition active:scale-95 shadow-2xs cursor-pointer"
+            className="px-3.5 py-1.5 rounded-xl bg-slate-50 hover:bg-sky-50 hover:text-sky-800 hover:border-sky-200 text-slate-700 border border-slate-200 font-semibold whitespace-nowrap transition active:scale-95 shadow-2xs cursor-pointer flex items-center space-x-1.5"
           >
-            Dallas → Chicago (1,050 mi)
+            <span>Dallas → Chicago</span>
+            <span className="text-[10px] font-mono text-slate-400 font-normal">(1,050 mi)</span>
           </button>
           <button
             type="button"
             onClick={() => handleApplyPreset('cross_country')}
-            className="px-3.5 py-2 rounded-xl bg-slate-50 hover:bg-sky-50 hover:text-sky-800 hover:border-sky-200 text-slate-700 border border-slate-200 font-semibold whitespace-nowrap transition active:scale-95 shadow-2xs cursor-pointer"
+            className="px-3.5 py-1.5 rounded-xl bg-slate-50 hover:bg-sky-50 hover:text-sky-800 hover:border-sky-200 text-slate-700 border border-slate-200 font-semibold whitespace-nowrap transition active:scale-95 shadow-2xs cursor-pointer flex items-center space-x-1.5"
           >
-            LA → Dallas (1,400+ mi)
+            <span>LA → Dallas</span>
+            <span className="text-[10px] font-mono text-slate-400 font-normal">(1,435 mi)</span>
           </button>
           <button
             type="button"
             onClick={() => handleApplyPreset('florida')}
-            className="px-3.5 py-2 rounded-xl bg-slate-50 hover:bg-sky-50 hover:text-sky-800 hover:border-sky-200 text-slate-700 border border-slate-200 font-semibold whitespace-nowrap transition active:scale-95 shadow-2xs cursor-pointer"
+            className="px-3.5 py-1.5 rounded-xl bg-slate-50 hover:bg-sky-50 hover:text-sky-800 hover:border-sky-200 text-slate-700 border border-slate-200 font-semibold whitespace-nowrap transition active:scale-95 shadow-2xs cursor-pointer flex items-center space-x-1.5"
           >
-            Atlanta → Miami (660 mi)
+            <span>Atlanta → Miami</span>
+            <span className="text-[10px] font-mono text-slate-400 font-normal">(660 mi)</span>
           </button>
         </div>
       </div>
@@ -245,32 +248,41 @@ export const TripPlannerForm: React.FC<TripPlannerFormProps> = ({ onPlanTrip, is
 
       {/* Main Planning Form */}
       <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-5">
           {/* Field 1: Current Location */}
           <LocationInput
             id="current-location"
-            label="1. Current Location"
+            label="Current Location"
             value={currentLoc}
             onChange={setCurrentLoc}
             placeholder="Search departure city (e.g. Dallas, TX)"
+            stepType="start"
+            stepTag="1. Origin"
+            subtitle="Tractor staging terminal / departure point"
           />
 
           {/* Field 2: Pickup Location */}
           <LocationInput
             id="pickup-location"
-            label="2. Pickup Location (1 hr load)"
+            label="Pickup Shipper"
             value={pickupLoc}
             onChange={setPickupLoc}
             placeholder="Search shipper city (e.g. Waco, TX)"
+            stepType="pickup"
+            stepTag="2. Pickup"
+            subtitle="Freight loading facility (1.0 hr load required)"
           />
 
           {/* Field 3: Dropoff Location */}
           <LocationInput
             id="dropoff-location"
-            label="3. Dropoff Location (1 hr unload)"
+            label="Receiver Dropoff"
             value={dropoffLoc}
             onChange={setDropoffLoc}
             placeholder="Search receiver city (e.g. Chicago, IL)"
+            stepType="dropoff"
+            stepTag="3. Dropoff"
+            subtitle="Final consignee destination (1.0 hr unload)"
           />
         </div>
 
