@@ -189,15 +189,15 @@ export const TripPlannerForm: React.FC<TripPlannerFormProps> = ({ onPlanTrip, is
   };
 
   return (
-    <section id="planner-form-section" className="bg-white/95 backdrop-blur-xl border border-slate-200/90 rounded-3xl p-6 sm:p-8 shadow-soft-md relative overflow-hidden">
+    <section id="planner-form-section" className="bg-white/95 backdrop-blur-xl border border-slate-200/90 rounded-2xl sm:rounded-3xl p-4 sm:p-7 lg:p-8 shadow-soft-md relative overflow-hidden">
       {/* Preset Quick Actions Bar */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6 pb-6 border-b border-slate-100">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 sm:gap-4 mb-5 sm:mb-6 pb-4 sm:pb-6 border-b border-slate-100">
         <div>
           <div className="flex items-center space-x-2.5">
-            <span className="p-2 rounded-2xl bg-sky-50 text-sky-700 border border-sky-100">
+            <span className="p-2 rounded-2xl bg-sky-50 text-sky-700 border border-sky-100 shrink-0">
               <Truck className="w-5 h-5" />
             </span>
-            <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+            <h2 className="text-lg sm:text-2xl font-black text-slate-900 tracking-tight">
               Interstate CMV Trip Planner
             </h2>
           </div>
@@ -206,16 +206,16 @@ export const TripPlannerForm: React.FC<TripPlannerFormProps> = ({ onPlanTrip, is
           </p>
         </div>
 
-        {/* Quick sample buttons - Responsive flex-wrap */}
-        <div className="flex flex-wrap items-center gap-2 text-xs">
-          <span className="text-slate-500 flex items-center space-x-1 font-semibold shrink-0">
-            <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-            <span>Preset Hauls:</span>
+        {/* Quick sample buttons - Clean single-row horizontal scroll on mobile, no tall vertical stacking */}
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 pt-0.5 no-scrollbar w-full lg:w-auto -mx-1 px-1 flex-nowrap text-xs">
+          <span className="text-slate-500 flex items-center space-x-1 font-semibold shrink-0 mr-1 text-[11px] sm:text-xs">
+            <Sparkles className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+            <span className="hidden xs:inline">Presets:</span>
           </span>
           <button
             type="button"
             onClick={() => handleApplyPreset('chicago')}
-            className="px-3.5 py-1.5 rounded-xl bg-slate-50 hover:bg-sky-50 hover:text-sky-800 hover:border-sky-200 text-slate-700 border border-slate-200 font-semibold whitespace-nowrap transition active:scale-95 shadow-2xs cursor-pointer flex items-center space-x-1.5"
+            className="px-3 py-1.5 rounded-xl bg-slate-50 hover:bg-sky-50 hover:text-sky-800 hover:border-sky-200 text-slate-700 border border-slate-200/90 font-semibold whitespace-nowrap transition active:scale-95 shadow-2xs cursor-pointer flex items-center space-x-1.5 shrink-0 text-xs"
           >
             <span>Dallas → Chicago</span>
             <span className="text-[10px] font-mono text-slate-400 font-normal">(1,050 mi)</span>
@@ -223,7 +223,7 @@ export const TripPlannerForm: React.FC<TripPlannerFormProps> = ({ onPlanTrip, is
           <button
             type="button"
             onClick={() => handleApplyPreset('cross_country')}
-            className="px-3.5 py-1.5 rounded-xl bg-slate-50 hover:bg-sky-50 hover:text-sky-800 hover:border-sky-200 text-slate-700 border border-slate-200 font-semibold whitespace-nowrap transition active:scale-95 shadow-2xs cursor-pointer flex items-center space-x-1.5"
+            className="px-3 py-1.5 rounded-xl bg-slate-50 hover:bg-sky-50 hover:text-sky-800 hover:border-sky-200 text-slate-700 border border-slate-200/90 font-semibold whitespace-nowrap transition active:scale-95 shadow-2xs cursor-pointer flex items-center space-x-1.5 shrink-0 text-xs"
           >
             <span>LA → Dallas</span>
             <span className="text-[10px] font-mono text-slate-400 font-normal">(1,435 mi)</span>
@@ -231,7 +231,7 @@ export const TripPlannerForm: React.FC<TripPlannerFormProps> = ({ onPlanTrip, is
           <button
             type="button"
             onClick={() => handleApplyPreset('florida')}
-            className="px-3.5 py-1.5 rounded-xl bg-slate-50 hover:bg-sky-50 hover:text-sky-800 hover:border-sky-200 text-slate-700 border border-slate-200 font-semibold whitespace-nowrap transition active:scale-95 shadow-2xs cursor-pointer flex items-center space-x-1.5"
+            className="px-3 py-1.5 rounded-xl bg-slate-50 hover:bg-sky-50 hover:text-sky-800 hover:border-sky-200 text-slate-700 border border-slate-200/90 font-semibold whitespace-nowrap transition active:scale-95 shadow-2xs cursor-pointer flex items-center space-x-1.5 shrink-0 text-xs"
           >
             <span>Atlanta → Miami</span>
             <span className="text-[10px] font-mono text-slate-400 font-normal">(660 mi)</span>
@@ -240,15 +240,15 @@ export const TripPlannerForm: React.FC<TripPlannerFormProps> = ({ onPlanTrip, is
       </div>
 
       {validationError && (
-        <div className="mb-6 flex items-start space-x-2.5 p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-700 text-xs sm:text-sm animate-slide-up">
+        <div className="mb-5 sm:mb-6 flex items-start space-x-2.5 p-3.5 sm:p-4 rounded-xl sm:rounded-2xl bg-rose-50 border border-rose-200 text-rose-700 text-xs sm:text-sm animate-slide-up">
           <AlertCircle className="w-5 h-5 shrink-0 text-rose-500 mt-0.5" />
           <span className="font-semibold">{validationError}</span>
         </div>
       )}
 
       {/* Main Planning Form */}
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-5">
+      <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 sm:gap-4 lg:gap-5">
           {/* Field 1: Current Location */}
           <LocationInput
             id="current-location"
@@ -290,20 +290,21 @@ export const TripPlannerForm: React.FC<TripPlannerFormProps> = ({ onPlanTrip, is
         <CycleHoursInput value={cycleUsed} onChange={setCycleUsed} />
 
         {/* Action Bar */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-5 border-t border-slate-100">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-4 sm:pt-5 border-t border-slate-100">
           <button
             type="button"
             onClick={() => setIsAdvancedOpen(true)}
-            className="w-full sm:w-auto flex items-center justify-center space-x-2 px-4 py-3 rounded-2xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 text-xs font-semibold shadow-2xs transition active:scale-98 cursor-pointer"
+            className="w-full sm:w-auto flex items-center justify-center space-x-2 px-4 py-2.5 sm:py-3 rounded-xl sm:rounded-2xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 text-xs font-semibold shadow-2xs transition active:scale-98 cursor-pointer"
           >
-            <Sliders className="w-4 h-4 text-slate-500" />
-            <span>Advanced Details (Start Time, Carrier, Driver)</span>
+            <Sliders className="w-4 h-4 text-slate-500 shrink-0" />
+            <span className="sm:hidden">Trip & Driver Settings</span>
+            <span className="hidden sm:inline">Advanced Details (Start Time, Carrier, Driver)</span>
           </button>
 
           <button
             type="submit"
             disabled={isLoading}
-            className={`w-full sm:w-auto flex items-center justify-center space-x-2.5 px-8 py-3.5 rounded-2xl font-bold text-sm shadow-md transition-all cursor-pointer ${
+            className={`w-full sm:w-auto flex items-center justify-center space-x-2.5 px-6 sm:px-8 py-3 sm:py-3.5 rounded-xl sm:rounded-2xl font-bold text-sm shadow-md transition-all cursor-pointer ${
               isLoading
                 ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
                 : 'bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600 hover:from-sky-500 hover:via-blue-500 hover:to-indigo-500 text-white shadow-sky-600/25 active:scale-[0.98]'

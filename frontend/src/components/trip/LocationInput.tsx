@@ -205,7 +205,7 @@ export const LocationInput: React.FC<LocationInputProps> = ({
       </div>
 
       {subtitle && (
-        <p className="text-[11px] text-slate-400 font-medium px-0.5 truncate">{subtitle}</p>
+        <p className="text-[11px] text-slate-500 font-normal px-0.5 truncate">{subtitle}</p>
       )}
 
       {errorMsg && <p className="text-xs text-rose-600 font-medium px-1">{errorMsg}</p>}
