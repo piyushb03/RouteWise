@@ -120,7 +120,7 @@ export const RouteMap: React.FC<RouteMapProps> = ({ route, stops }) => {
   const restBreaksCount = useMemo(() => stops.filter((s) => s.type === 'REST_30').length, [stops]);
   const resetsCount = useMemo(() => stops.filter((s) => s.type === 'REST_10').length, [stops]);
 
-  const tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+  const tileUrl = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
   const tileAttr = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
 
   return (
