@@ -189,7 +189,7 @@ export const TripPlannerForm: React.FC<TripPlannerFormProps> = ({ onPlanTrip, is
   };
 
   return (
-    <section id="planner-form-section" className="bg-white border border-slate-200/90 rounded-3xl p-5 sm:p-8 shadow-soft-sm relative overflow-hidden">
+    <section id="planner-form-section" className="bg-white/95 backdrop-blur-xl border border-slate-200/90 rounded-3xl p-6 sm:p-8 shadow-soft-md relative overflow-hidden">
       {/* Preset Quick Actions Bar */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6 pb-6 border-b border-slate-100">
         <div>
@@ -207,31 +207,31 @@ export const TripPlannerForm: React.FC<TripPlannerFormProps> = ({ onPlanTrip, is
         </div>
 
         {/* Quick sample buttons - Scrollable pill bar on mobile */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0 text-xs">
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0 text-xs no-scrollbar">
           <span className="text-slate-500 flex items-center space-x-1 font-semibold shrink-0">
             <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-            <span>Sample Trips:</span>
+            <span>Sample Routes:</span>
           </span>
           <button
             type="button"
             onClick={() => handleApplyPreset('chicago')}
-            className="px-3.5 py-2 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 font-semibold whitespace-nowrap transition active:scale-95 shadow-2xs cursor-pointer"
+            className="px-3.5 py-2 rounded-xl bg-slate-50 hover:bg-sky-50 hover:text-sky-800 hover:border-sky-200 text-slate-700 border border-slate-200 font-semibold whitespace-nowrap transition active:scale-95 shadow-2xs cursor-pointer"
           >
-            Dallas → Chicago
+            Dallas → Chicago (1,050 mi)
           </button>
           <button
             type="button"
             onClick={() => handleApplyPreset('cross_country')}
-            className="px-3.5 py-2 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 font-semibold whitespace-nowrap transition active:scale-95 shadow-2xs cursor-pointer"
+            className="px-3.5 py-2 rounded-xl bg-slate-50 hover:bg-sky-50 hover:text-sky-800 hover:border-sky-200 text-slate-700 border border-slate-200 font-semibold whitespace-nowrap transition active:scale-95 shadow-2xs cursor-pointer"
           >
             LA → Dallas (1,400+ mi)
           </button>
           <button
             type="button"
             onClick={() => handleApplyPreset('florida')}
-            className="px-3.5 py-2 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200 font-semibold whitespace-nowrap transition active:scale-95 shadow-2xs cursor-pointer"
+            className="px-3.5 py-2 rounded-xl bg-slate-50 hover:bg-sky-50 hover:text-sky-800 hover:border-sky-200 text-slate-700 border border-slate-200 font-semibold whitespace-nowrap transition active:scale-95 shadow-2xs cursor-pointer"
           >
-            Atlanta → Miami
+            Atlanta → Miami (660 mi)
           </button>
         </div>
       </div>
@@ -291,10 +291,10 @@ export const TripPlannerForm: React.FC<TripPlannerFormProps> = ({ onPlanTrip, is
           <button
             type="submit"
             disabled={isLoading}
-            className={`w-full sm:w-auto flex items-center justify-center space-x-2 px-8 py-3.5 rounded-2xl font-bold text-sm shadow-md transition-all cursor-pointer ${
+            className={`w-full sm:w-auto flex items-center justify-center space-x-2.5 px-8 py-3.5 rounded-2xl font-bold text-sm shadow-md transition-all cursor-pointer ${
               isLoading
                 ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
-                : 'bg-slate-900 hover:bg-slate-800 text-white shadow-slate-900/10 active:scale-[0.98]'
+                : 'bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600 hover:from-sky-500 hover:via-blue-500 hover:to-indigo-500 text-white shadow-sky-600/25 active:scale-[0.98]'
             }`}
           >
             <Navigation className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
