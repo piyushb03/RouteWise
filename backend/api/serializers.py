@@ -13,7 +13,7 @@ class LocationSerializer(serializers.Serializer):
     longitude = serializers.FloatField(min_value=-180.0, max_value=180.0, required=True)
     city = serializers.CharField(max_length=150, required=False, allow_blank=True, default="")
     state = serializers.CharField(max_length=100, required=False, allow_blank=True, default="")
-    country = serializers.CharField(max_length=10, required=False, allow_blank=True, default="US")
+    country = serializers.CharField(max_length=100, required=False, allow_blank=True, default="US")
 
 
 class GeocodeRequestSerializer(serializers.Serializer):

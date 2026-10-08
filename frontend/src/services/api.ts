@@ -52,14 +52,28 @@ export async function planTrip(payload: TripPlanRequest): Promise<TripPlanRespon
     body: JSON.stringify(payload),
   });
 
+function formatValidationDetails(details: any): string {
+  if (!details) return '';
+  if (typeof details === 'string') return details;
+  if (Array.isArray(details)) {
+    return details.map(formatValidationDetails).filter(Boolean).join(', ');
+  }
+  if (typeof details === 'object') {
+    return Object.entries(details)
+      .map(([field, errs]) => `${field}: ${formatValidationDetails(errs)}`)
+      .join('; ');
+  }
+  return String(details);
+}
+
   if (!res.ok) {
     const errorData = await res.json().catch(() => ({}));
     let msg = errorData.error || `Trip planning failed with status ${res.status}`;
     if (errorData.details) {
-      const fieldErrors = Object.entries(errorData.details)
-        .map(([field, errs]: [string, any]) => `${field}: ${Array.isArray(errs) ? errs.join(', ') : errs}`)
-        .join('; ');
-      msg += ` (${fieldErrors})`;
+      const fieldErrors = formatValidationDetails(errorData.details);
+      if (fieldErrors) {
+        msg += ` (${fieldErrors})`;
+      }
     }
     throw new Error(msg);
   }
