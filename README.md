@@ -1,11 +1,9 @@
 # RouteWise: Commercial Interstate HOS Trip Planner & ELD Daily Log Generator
 
-[![CI/CD Pipeline](https://github.com/your-username/routewise/actions/workflows/ci.yml/badge.svg)](https://github.com/your-username/routewise/actions/workflows/ci.yml)
 [![Python 3.13](https://img.shields.io/badge/python-3.13-blue.svg)](https://www.python.org/)
 [![Django 5.x](https://img.shields.io/badge/django-5.x-092e20.svg)](https://www.djangoproject.com/)
 [![React 18](https://img.shields.io/badge/react-18-61dafb.svg)](https://react.dev/)
 [![TypeScript 5.x](https://img.shields.io/badge/typescript-5.x-3178c6.svg)](https://www.typescriptlang.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 **RouteWise** is a full-stack web application designed for property-carrying interstate commercial motor vehicle (CMV) drivers and logistics dispatchers. It calculates real-world highway driving routes and dynamically schedules compliant Hours of Service (HOS) rest stops, resets, and refueling breaks under **FMCSA April 2022 property-carrier regulations**, automatically generating printable 24-hour daily log sheets with visually plotted duty-status graph lines.
 
