@@ -39,7 +39,6 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 .vite/
-DEMO_SCRIPT.md
 
 # Environment Variables & Secrets
 .env
