@@ -25,5 +25,5 @@ def spa_fallback_view(request):
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/", include("api.urls")),
-    re_path(r"^(?!api/|admin/|static/).*$", spa_fallback_view, name="spa_fallback"),
+    re_path(r"^(?!api/|admin/|static/|assets/).*$", spa_fallback_view, name="spa_fallback"),
 ]
