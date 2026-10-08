@@ -35,15 +35,40 @@ export const App: React.FC = () => {
   const [loadingStep, setLoadingStep] = useState('Initiating trip calculation...');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  // Center-focused results tabs
+  // Center-focused results tabs (defaults to 'all' sections view)
   const [activeTab, setActiveTab] = useState<ResultTab>('map');
-  const [viewMode, setViewMode] = useState<'focused' | 'all'>('focused');
+  const [viewMode, setViewMode] = useState<'focused' | 'all'>('all');
+
+  const handleTabClick = (tab: ResultTab) => {
+    setActiveTab(tab);
+    if (viewMode === 'all') {
+      const sectionMap: Record<ResultTab, string> = {
+        map: 'map-section',
+        logs: 'logs-section',
+        timeline: 'timeline-section',
+        directions: 'instructions-section',
+        compliance: 'compliance-panel-section',
+      };
+      const el = document.getElementById(sectionMap[tab]);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+  };
 
   const handleScrollTo = (elementId: string, targetTab?: string) => {
     if (targetTab && ['map', 'logs', 'timeline', 'directions', 'compliance'].includes(targetTab)) {
       setActiveTab(targetTab as ResultTab);
     }
-    const el = document.getElementById(elementId);
+    const sectionMap: Record<string, string> = {
+      map: 'map-section',
+      logs: 'logs-section',
+      timeline: 'timeline-section',
+      directions: 'instructions-section',
+      compliance: 'compliance-panel-section',
+    };
+    const targetId = (viewMode === 'all' && targetTab && sectionMap[targetTab]) ? sectionMap[targetTab] : elementId;
+    const el = document.getElementById(targetId) || document.getElementById(elementId);
     if (el) {
       el.scrollIntoView({ behavior: 'smooth' });
     }
@@ -401,7 +426,7 @@ export const App: React.FC = () => {
               <div className="flex items-center space-x-1 overflow-x-auto w-full sm:w-auto p-0.5">
                 <button
                   type="button"
-                  onClick={() => setActiveTab('map')}
+                  onClick={() => handleTabClick('map')}
                   className={`flex items-center space-x-1.5 px-3 sm:px-4 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap cursor-pointer ${
                     activeTab === 'map'
                       ? 'bg-slate-900 text-white shadow-soft-sm'
@@ -414,7 +439,7 @@ export const App: React.FC = () => {
 
                 <button
                   type="button"
-                  onClick={() => setActiveTab('logs')}
+                  onClick={() => handleTabClick('logs')}
                   className={`flex items-center space-x-1.5 px-3 sm:px-4 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap cursor-pointer ${
                     activeTab === 'logs'
                       ? 'bg-slate-900 text-white shadow-soft-sm'
@@ -427,7 +452,7 @@ export const App: React.FC = () => {
 
                 <button
                   type="button"
-                  onClick={() => setActiveTab('timeline')}
+                  onClick={() => handleTabClick('timeline')}
                   className={`flex items-center space-x-1.5 px-3 sm:px-4 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap cursor-pointer ${
                     activeTab === 'timeline'
                       ? 'bg-slate-900 text-white shadow-soft-sm'
@@ -440,7 +465,7 @@ export const App: React.FC = () => {
 
                 <button
                   type="button"
-                  onClick={() => setActiveTab('directions')}
+                  onClick={() => handleTabClick('directions')}
                   className={`flex items-center space-x-1.5 px-3 sm:px-4 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap cursor-pointer ${
                     activeTab === 'directions'
                       ? 'bg-slate-900 text-white shadow-soft-sm'
@@ -453,7 +478,7 @@ export const App: React.FC = () => {
 
                 <button
                   type="button"
-                  onClick={() => setActiveTab('compliance')}
+                  onClick={() => handleTabClick('compliance')}
                   className={`flex items-center space-x-1.5 px-3 sm:px-4 py-2 rounded-xl text-xs font-bold transition whitespace-nowrap cursor-pointer ${
                     activeTab === 'compliance'
                       ? 'bg-slate-900 text-white shadow-soft-sm'
