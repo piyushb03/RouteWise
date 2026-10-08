@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { MapContainer, TileLayer, Polyline, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import { Stop, RouteData } from '../../types/trip';
-import { MapPin, Clock, Fuel, Bed, Navigation, Maximize2, Minimize2, LocateFixed } from 'lucide-react';
+import { MapPin, Clock, Fuel, Bed, Maximize2, Minimize2, LocateFixed } from 'lucide-react';
 
 interface RouteMapProps {
   route: RouteData;
@@ -39,11 +39,8 @@ const FlyToStop: React.FC<{ targetLocation: [number, number] | null }> = ({ targ
   return null;
 };
 
-// Invalidate container size when fullscreen or tab changes to prevent grey or missing tiles
-const MapInvalidateHandler: React.FC<{ isFullscreen: boolean; mobileTab: string }> = ({
-  isFullscreen,
-  mobileTab,
-}) => {
+// Invalidate container size when fullscreen changes to prevent grey or missing tiles
+const MapInvalidateHandler: React.FC<{ isFullscreen: boolean }> = ({ isFullscreen }) => {
   const map = useMap();
 
   useEffect(() => {
@@ -51,7 +48,7 @@ const MapInvalidateHandler: React.FC<{ isFullscreen: boolean; mobileTab: string 
       map.invalidateSize();
     }, 150);
     return () => clearTimeout(timer);
-  }, [isFullscreen, mobileTab, map]);
+  }, [isFullscreen, map]);
 
   return null;
 };
@@ -138,7 +135,6 @@ const createMarkerIcon = (type: string, isSelected: boolean = false) => {
 };
 
 export const RouteMap: React.FC<RouteMapProps> = ({ route, stops }) => {
-  const [mobileTab, setMobileTab] = useState<'map' | 'details'>('map');
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [fitTrigger, setFitTrigger] = useState(0);
   const [selectedStopId, setSelectedStopId] = useState<string | null>(null);
@@ -186,8 +182,6 @@ export const RouteMap: React.FC<RouteMapProps> = ({ route, stops }) => {
   const handleSelectStop = (stop: Stop) => {
     setSelectedStopId(stop.stop_id);
     setTargetLocation([stop.latitude, stop.longitude]);
-    // Switch to map tab if on mobile
-    setMobileTab('map');
   };
 
   const handleResetView = () => {
@@ -254,7 +248,7 @@ export const RouteMap: React.FC<RouteMapProps> = ({ route, stops }) => {
 
         <FitBounds coordinates={coordinates} triggerFit={fitTrigger} />
         <FlyToStop targetLocation={targetLocation} />
-        <MapInvalidateHandler isFullscreen={isFullscreen} mobileTab={mobileTab} />
+        <MapInvalidateHandler isFullscreen={isFullscreen} />
 
         {/* Route Polyline */}
         {coordinates.length > 0 && (
@@ -334,203 +328,179 @@ export const RouteMap: React.FC<RouteMapProps> = ({ route, stops }) => {
 
   return (
     <>
-      <section id="map-section" className="bg-white border border-slate-200/90 rounded-3xl p-4 sm:p-6 lg:p-7 shadow-soft-sm">
-        {/* Mobile-Only Segmented View Switcher */}
-        <div className="lg:hidden flex p-1 bg-slate-100 rounded-2xl mb-4 text-xs font-semibold">
-          <button
-            type="button"
-            onClick={() => setMobileTab('map')}
-            className={`flex-1 py-2.5 rounded-xl transition flex items-center justify-center space-x-1.5 ${
-              mobileTab === 'map' ? 'bg-white text-slate-900 shadow-2xs font-bold' : 'text-slate-600'
-            }`}
-          >
-            <MapPin className="w-4 h-4 text-sky-600" />
-            <span>Interactive Map</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => setMobileTab('details')}
-            className={`flex-1 py-2.5 rounded-xl transition flex items-center justify-center space-x-1.5 ${
-              mobileTab === 'details' ? 'bg-white text-slate-900 shadow-2xs font-bold' : 'text-slate-600'
-            }`}
-          >
-            <Navigation className="w-4 h-4 text-teal-600" />
-            <span>Route & Stops ({stops.length})</span>
-          </button>
+      <section id="map-section" className="bg-white border border-slate-200/90 rounded-3xl p-4 sm:p-6 lg:p-7 shadow-soft-sm space-y-5">
+        {/* Header with Title and Overall Metrics */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
+          <div className="space-y-1">
+            <div className="flex items-center space-x-2.5">
+              <span className="p-2 rounded-2xl bg-sky-50 text-sky-700 border border-sky-100">
+                <MapPin className="w-5 h-5" />
+              </span>
+              <h3 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+                Interstate Route Navigation
+              </h3>
+            </div>
+            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-normal">
+              Continuous highway routing geometry calculated via OSRM turn-by-turn road data.
+              Mandatory FMCSA 30-minute rest breaks, 10-hour sleeper resets, and ≤1,000-mile fuel stops are automatically scheduled along the path.
+            </p>
+          </div>
+
+          <div className="flex items-center space-x-2 self-start sm:self-auto shrink-0">
+            <span className="font-mono text-xs sm:text-sm font-black text-slate-900 bg-slate-50 border border-slate-200/90 px-3.5 py-1.5 rounded-xl shadow-2xs">
+              {totalMiles > 0 ? totalMiles.toFixed(1) : '—'} <span className="text-xs font-normal text-slate-500">total miles</span>
+            </span>
+          </div>
         </div>
 
-        {/* 2-Halves Layout on Desktop, Segmented or Stacked on Mobile */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-7 items-stretch">
-          {/* LEFT SIDE: Text, Route Details, Stops List, & Legend */}
-          <div className={`lg:col-span-5 flex flex-col justify-between space-y-4 ${mobileTab === 'details' ? 'block' : 'hidden lg:flex'}`}>
-            {/* Header */}
-            <div className="space-y-1.5">
-              <div className="flex items-center space-x-2.5">
-                <span className="p-2 rounded-2xl bg-sky-50 text-sky-700 border border-sky-100">
-                  <MapPin className="w-5 h-5" />
-                </span>
-                <h3 className="text-lg sm:text-xl font-black text-slate-900 tracking-tight">
-                  Interstate Route Navigation
-                </h3>
-              </div>
-              <p className="text-xs text-slate-600 leading-relaxed font-normal">
-                Continuous highway routing geometry calculated via OSRM turn-by-turn road data.
-                Mandatory FMCSA 30-minute rest breaks, 10-hour sleeper resets, and ≤1,000-mile fuel stops are automatically scheduled along the path.
-              </p>
+        {/* Route Details & Waypoints Cards (Placed ABOVE the map in a 2-card grid) */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Card 1: Route Corridor & Interventions */}
+          <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/90 space-y-3 shadow-2xs flex flex-col justify-between">
+            <div className="flex items-center justify-between text-xs font-bold text-slate-500 uppercase tracking-wider">
+              <span>Route Corridor</span>
+              <span className="font-mono text-slate-900 font-extrabold text-xs">
+                {totalMiles > 0 ? totalMiles.toFixed(1) : '—'} mi
+              </span>
             </div>
 
-            {/* Route Corridor Summary Card */}
-            <div className="p-3.5 sm:p-4 rounded-2xl bg-slate-50 border border-slate-200/90 space-y-2.5 shadow-2xs">
-              <div className="flex items-center justify-between text-xs font-bold text-slate-500 uppercase tracking-wider">
-                <span>Route Corridor</span>
-                <span className="font-mono text-slate-900 font-extrabold text-sm sm:text-base">
-                  {totalMiles > 0 ? totalMiles.toFixed(1) : '—'} <span className="text-xs font-normal text-slate-500">mi</span>
-                </span>
-              </div>
-
-              <div className="space-y-2 text-xs">
-                <div className="flex items-start space-x-2.5">
-                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 mt-1 shrink-0"></span>
-                  <div className="flex-1 min-w-0">
-                    <span className="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">1. Origin</span>
-                    <span className="font-semibold text-slate-800 truncate block">
-                      {route.leg1?.origin?.name || 'Current Location'}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="flex items-start space-x-2.5">
-                  <span className="w-2.5 h-2.5 rounded-full bg-blue-500 mt-1 shrink-0"></span>
-                  <div className="flex-1 min-w-0">
-                    <span className="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">2. Shipper (1h Loading)</span>
-                    <span className="font-semibold text-slate-800 truncate block">
-                      {route.leg1?.destination?.name || 'Pickup Location'}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="flex items-start space-x-2.5">
-                  <span className="w-2.5 h-2.5 rounded-full bg-purple-500 mt-1 shrink-0"></span>
-                  <div className="flex-1 min-w-0">
-                    <span className="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">3. Receiver (1h Delivery)</span>
-                    <span className="font-semibold text-slate-800 truncate block">
-                      {route.leg2?.destination?.name || 'Dropoff Location'}
-                    </span>
-                  </div>
+            <div className="space-y-2 text-xs">
+              <div className="flex items-start space-x-2.5">
+                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 mt-1 shrink-0"></span>
+                <div className="flex-1 min-w-0">
+                  <span className="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">1. Origin</span>
+                  <span className="font-semibold text-slate-800 truncate block">
+                    {route.leg1?.origin?.name || 'Current Location'}
+                  </span>
                 </div>
               </div>
 
-              {/* Quick Metrics */}
-              <div className="pt-2 border-t border-slate-200/80 grid grid-cols-3 gap-2 text-center text-xs">
-                <div className="bg-white p-2 rounded-xl border border-slate-200/80">
-                  <div className="text-[10px] text-slate-500 flex items-center justify-center space-x-1">
-                    <Fuel className="w-3 h-3 text-amber-600" />
-                    <span>Fuel</span>
-                  </div>
-                  <div className="font-bold text-slate-900 mt-0.5">{fuelStopsCount}</div>
+              <div className="flex items-start space-x-2.5">
+                <span className="w-2.5 h-2.5 rounded-full bg-blue-500 mt-1 shrink-0"></span>
+                <div className="flex-1 min-w-0">
+                  <span className="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">2. Shipper (1h Loading)</span>
+                  <span className="font-semibold text-slate-800 truncate block">
+                    {route.leg1?.destination?.name || 'Pickup Location'}
+                  </span>
                 </div>
-                <div className="bg-white p-2 rounded-xl border border-slate-200/80">
-                  <div className="text-[10px] text-slate-500 flex items-center justify-center space-x-1">
-                    <Clock className="w-3 h-3 text-cyan-600" />
-                    <span>30m Rest</span>
-                  </div>
-                  <div className="font-bold text-slate-900 mt-0.5">{restBreaksCount}</div>
-                </div>
-                <div className="bg-white p-2 rounded-xl border border-slate-200/80">
-                  <div className="text-[10px] text-slate-500 flex items-center justify-center space-x-1">
-                    <Bed className="w-3 h-3 text-indigo-600" />
-                    <span>10h Reset</span>
-                  </div>
-                  <div className="font-bold text-slate-900 mt-0.5">{resetsCount}</div>
+              </div>
+
+              <div className="flex items-start space-x-2.5">
+                <span className="w-2.5 h-2.5 rounded-full bg-purple-500 mt-1 shrink-0"></span>
+                <div className="flex-1 min-w-0">
+                  <span className="text-[10px] uppercase font-bold text-slate-400 block tracking-wider">3. Receiver (1h Delivery)</span>
+                  <span className="font-semibold text-slate-800 truncate block">
+                    {route.leg2?.destination?.name || 'Dropoff Location'}
+                  </span>
                 </div>
               </div>
             </div>
 
-            {/* Sequential Stops Timeline List - Clickable! */}
-            <div className="space-y-2">
-              <div className="flex items-center justify-between text-xs">
-                <span className="font-bold text-slate-800 uppercase tracking-wider">
-                  Waypoints Sequence ({stops.length})
-                </span>
-                <span className="text-[11px] text-sky-600 font-medium">
-                  Click any stop to view on map
-                </span>
+            {/* Quick Metrics */}
+            <div className="pt-2 border-t border-slate-200/80 grid grid-cols-3 gap-2 text-center text-xs">
+              <div className="bg-white p-2 rounded-xl border border-slate-200/80 shadow-2xs">
+                <div className="text-[10px] text-slate-500 flex items-center justify-center space-x-1">
+                  <Fuel className="w-3 h-3 text-amber-600" />
+                  <span>Fuel</span>
+                </div>
+                <div className="font-bold text-slate-900 mt-0.5">{fuelStopsCount}</div>
               </div>
+              <div className="bg-white p-2 rounded-xl border border-slate-200/80 shadow-2xs">
+                <div className="text-[10px] text-slate-500 flex items-center justify-center space-x-1">
+                  <Clock className="w-3 h-3 text-cyan-600" />
+                  <span>30m Rest</span>
+                </div>
+                <div className="font-bold text-slate-900 mt-0.5">{restBreaksCount}</div>
+              </div>
+              <div className="bg-white p-2 rounded-xl border border-slate-200/80 shadow-2xs">
+                <div className="text-[10px] text-slate-500 flex items-center justify-center space-x-1">
+                  <Bed className="w-3 h-3 text-indigo-600" />
+                  <span>10h Reset</span>
+                </div>
+                <div className="font-bold text-slate-900 mt-0.5">{resetsCount}</div>
+              </div>
+            </div>
+          </div>
 
-              <div className="max-h-52 overflow-y-auto space-y-1.5 pr-1 divide-y divide-slate-100 border border-slate-200/80 rounded-2xl p-2 bg-white shadow-2xs">
-                {stops.map((stop) => {
-                  const isSelected = selectedStopId === stop.stop_id;
-                  return (
-                    <button
-                      key={stop.stop_id}
-                      type="button"
-                      onClick={() => handleSelectStop(stop)}
-                      className={`w-full text-left pt-1.5 first:pt-0 flex items-center justify-between text-xs py-1.5 px-2 rounded-xl transition cursor-pointer ${
-                        isSelected ? 'bg-sky-50 border border-sky-200 shadow-2xs' : 'hover:bg-slate-50 border border-transparent'
-                      }`}
-                    >
-                      <div className="flex items-center space-x-2 min-w-0">
-                        <span className="text-base shrink-0">{getStopEmoji(stop.type)}</span>
-                        <div className="min-w-0">
-                          <div className={`font-semibold truncate ${isSelected ? 'text-sky-900 font-bold' : 'text-slate-900'}`}>
-                            {stop.title}
-                          </div>
-                          <div className="text-[11px] text-slate-500 truncate">
-                            {stop.city && stop.state ? `${stop.city}, ${stop.state}` : 'En route'}
-                          </div>
+          {/* Card 2: Waypoints Sequence & Legend */}
+          <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/90 space-y-2.5 shadow-2xs flex flex-col justify-between">
+            <div className="flex items-center justify-between text-xs">
+              <span className="font-bold text-slate-800 uppercase tracking-wider">
+                Waypoints Sequence ({stops.length})
+              </span>
+              <span className="text-[11px] text-sky-600 font-medium">
+                Click stop to fly on map
+              </span>
+            </div>
+
+            <div className="max-h-40 overflow-y-auto space-y-1.5 pr-1 divide-y divide-slate-100 border border-slate-200/80 rounded-2xl p-2 bg-white shadow-2xs">
+              {stops.map((stop) => {
+                const isSelected = selectedStopId === stop.stop_id;
+                return (
+                  <button
+                    key={stop.stop_id}
+                    type="button"
+                    onClick={() => handleSelectStop(stop)}
+                    className={`w-full text-left pt-1.5 first:pt-0 flex items-center justify-between text-xs py-1.5 px-2 rounded-xl transition cursor-pointer ${
+                      isSelected ? 'bg-sky-50 border border-sky-200 shadow-2xs' : 'hover:bg-slate-50 border border-transparent'
+                    }`}
+                  >
+                    <div className="flex items-center space-x-2 min-w-0">
+                      <span className="text-base shrink-0">{getStopEmoji(stop.type)}</span>
+                      <div className="min-w-0">
+                        <div className={`font-semibold truncate ${isSelected ? 'text-sky-900 font-bold' : 'text-slate-900'}`}>
+                          {stop.title}
+                        </div>
+                        <div className="text-[11px] text-slate-500 truncate">
+                          {stop.city && stop.state ? `${stop.city}, ${stop.state}` : 'En route'}
                         </div>
                       </div>
-                      <div className="text-right shrink-0 ml-2">
-                        <span className={`font-mono text-[11px] font-semibold px-2 py-0.5 rounded-full border ${
-                          isSelected ? 'bg-sky-600 text-white border-sky-600' : 'bg-slate-100 text-slate-700 border-slate-200'
-                        }`}>
-                          Mile {stop.route_mile.toFixed(0)}
-                        </span>
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
+                    </div>
+                    <div className="text-right shrink-0 ml-2">
+                      <span className={`font-mono text-[11px] font-semibold px-2 py-0.5 rounded-full border ${
+                        isSelected ? 'bg-sky-600 text-white border-sky-600' : 'bg-slate-100 text-slate-700 border-slate-200'
+                      }`}>
+                        Mile {stop.route_mile.toFixed(0)}
+                      </span>
+                    </div>
+                  </button>
+                );
+              })}
             </div>
 
-            {/* Legend */}
-            <div className="space-y-1.5 pt-2 border-t border-slate-100">
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
-                Marker Legend
+            {/* Marker Legend */}
+            <div className="pt-1.5 border-t border-slate-200/80 flex flex-wrap items-center gap-1.5 text-[10px] text-slate-700 font-medium">
+              <span className="flex items-center space-x-1 bg-white px-2 py-0.5 rounded-lg border border-slate-200">
+                <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+                <span>Start</span>
               </span>
-              <div className="flex flex-wrap items-center gap-1.5 text-[11px] text-slate-700 font-medium">
-                <span className="flex items-center space-x-1.5 bg-slate-50 px-2 py-0.5 rounded-lg border border-slate-200">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-                  <span>Start</span>
-                </span>
-                <span className="flex items-center space-x-1.5 bg-slate-50 px-2 py-0.5 rounded-lg border border-slate-200">
-                  <span className="w-2 h-2 rounded-full bg-blue-500"></span>
-                  <span>Pickup</span>
-                </span>
-                <span className="flex items-center space-x-1.5 bg-slate-50 px-2 py-0.5 rounded-lg border border-slate-200">
-                  <span className="w-2 h-2 rounded-full bg-purple-500"></span>
-                  <span>Dropoff</span>
-                </span>
-                <span className="flex items-center space-x-1.5 bg-slate-50 px-2 py-0.5 rounded-lg border border-slate-200">
-                  <span className="w-2 h-2 rounded-full bg-amber-500"></span>
-                  <span>Fuel</span>
-                </span>
-                <span className="flex items-center space-x-1.5 bg-slate-50 px-2 py-0.5 rounded-lg border border-slate-200">
-                  <span className="w-2 h-2 rounded-full bg-cyan-500"></span>
-                  <span>30m Break</span>
-                </span>
-                <span className="flex items-center space-x-1.5 bg-slate-50 px-2 py-0.5 rounded-lg border border-slate-200">
-                  <span className="w-2 h-2 rounded-full bg-indigo-500"></span>
-                  <span>10h Reset</span>
-                </span>
-              </div>
+              <span className="flex items-center space-x-1 bg-white px-2 py-0.5 rounded-lg border border-slate-200">
+                <span className="w-2 h-2 rounded-full bg-blue-500"></span>
+                <span>Pickup</span>
+              </span>
+              <span className="flex items-center space-x-1 bg-white px-2 py-0.5 rounded-lg border border-slate-200">
+                <span className="w-2 h-2 rounded-full bg-purple-500"></span>
+                <span>Dropoff</span>
+              </span>
+              <span className="flex items-center space-x-1 bg-white px-2 py-0.5 rounded-lg border border-slate-200">
+                <span className="w-2 h-2 rounded-full bg-amber-500"></span>
+                <span>Fuel</span>
+              </span>
+              <span className="flex items-center space-x-1 bg-white px-2 py-0.5 rounded-lg border border-slate-200">
+                <span className="w-2 h-2 rounded-full bg-cyan-500"></span>
+                <span>30m Break</span>
+              </span>
+              <span className="flex items-center space-x-1 bg-white px-2 py-0.5 rounded-lg border border-slate-200">
+                <span className="w-2 h-2 rounded-full bg-indigo-500"></span>
+                <span>10h Reset</span>
+              </span>
             </div>
           </div>
+        </div>
 
-          {/* RIGHT SIDE: Interactive Map */}
-          <div className={`lg:col-span-7 h-[400px] sm:h-[480px] lg:h-full min-h-[400px] sm:min-h-[480px] lg:min-h-[580px] rounded-2xl overflow-hidden border border-slate-200 shadow-inner relative flex flex-col ${mobileTab === 'map' ? 'block' : 'hidden lg:flex'}`}>
-            {renderMap(false)}
-          </div>
+        {/* FULL-WIDTH TALL INTERACTIVE MAP (Placed BELOW route details) */}
+        <div className="w-full h-[520px] sm:h-[620px] lg:h-[720px] min-h-[500px] rounded-2xl overflow-hidden border border-slate-200 shadow-inner relative flex flex-col">
+          {renderMap(false)}
         </div>
       </section>
 
