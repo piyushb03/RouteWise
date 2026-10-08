@@ -28,6 +28,16 @@ export const AdvancedSettingsModal: React.FC<AdvancedSettingsModalProps> = ({
   onChangeAdvanced,
 }) => {
   useEffect(() => {
+    if (isOpen) {
+      const originalOverflow = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = originalOverflow;
+      };
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && isOpen) {
         onClose();
@@ -48,15 +58,15 @@ export const AdvancedSettingsModal: React.FC<AdvancedSettingsModalProps> = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 animate-fade-in"
+      className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-6 animate-fade-in"
       onClick={(e) => e.target === e.currentTarget && onClose()}
       role="dialog"
       aria-modal="true"
       aria-labelledby="advanced-settings-title"
     >
-      <div className="relative bg-white border border-slate-200 rounded-3xl w-full max-w-2xl shadow-xl overflow-hidden animate-slide-up">
+      <div className="relative bg-white border border-slate-200 rounded-3xl w-full max-w-2xl shadow-2xl flex flex-col max-h-[85vh] my-auto overflow-hidden animate-slide-up">
         {/* Header */}
-        <div className="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-slate-200 bg-slate-50/80">
+        <div className="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-slate-200 bg-slate-50/80 shrink-0">
           <div className="flex items-center space-x-2.5">
             <div className="p-2 bg-white border border-slate-200 rounded-xl shadow-2xs">
               <Sliders className="w-4 h-4 text-slate-700" />
@@ -80,7 +90,7 @@ export const AdvancedSettingsModal: React.FC<AdvancedSettingsModalProps> = ({
         </div>
 
         {/* Content */}
-        <div className="p-5 sm:p-6 space-y-6 max-h-[75vh] overflow-y-auto">
+        <div className="p-5 sm:p-6 space-y-6 flex-1 min-h-0 overflow-y-auto">
           {/* Section: Trip Departure & Timing */}
           <div className="space-y-3">
             <h3 className="text-xs font-bold uppercase tracking-wider text-slate-900 flex items-center space-x-1.5">
@@ -268,7 +278,7 @@ export const AdvancedSettingsModal: React.FC<AdvancedSettingsModalProps> = ({
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-end px-5 sm:px-6 py-4 border-t border-slate-200 bg-slate-50/80">
+        <div className="flex items-center justify-end px-5 sm:px-6 py-4 border-t border-slate-200 bg-slate-50/80 shrink-0">
           <button
             onClick={onClose}
             className="w-full sm:w-auto px-6 py-3 bg-slate-900 hover:bg-slate-800 text-white text-xs sm:text-sm font-bold rounded-2xl shadow-soft-sm transition cursor-pointer"

@@ -1,16 +1,17 @@
 import React, { useState } from 'react';
-import { Truck, ShieldCheck, MapPin, FileText, Clock, Compass, Menu, X } from 'lucide-react';
+import { Truck, ShieldCheck, MapPin, FileText, Clock, Compass, Menu, X, Route } from 'lucide-react';
 
 interface NavbarProps {
   hasResults: boolean;
-  onScrollTo: (id: string) => void;
+  onScrollTo: (id: string, tab?: string) => void;
+  activeTab?: string;
 }
 
-export const Navbar: React.FC<NavbarProps> = ({ hasResults, onScrollTo }) => {
+export const Navbar: React.FC<NavbarProps> = ({ hasResults, onScrollTo, activeTab }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const handleNavClick = (sectionId: string) => {
-    onScrollTo(sectionId);
+  const handleNavClick = (sectionId: string, tab?: string) => {
+    onScrollTo(sectionId, tab);
     setMobileMenuOpen(false);
   };
 
@@ -57,32 +58,49 @@ export const Navbar: React.FC<NavbarProps> = ({ hasResults, onScrollTo }) => {
                   <span>HOS Clocks</span>
                 </button>
                 <button
-                  onClick={() => handleNavClick('map-section')}
-                  className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition cursor-pointer"
+                  onClick={() => handleNavClick('results-container', 'map')}
+                  className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition cursor-pointer ${
+                    activeTab === 'map' ? 'bg-sky-50 text-sky-700 border border-sky-200' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                  }`}
                 >
                   <MapPin className="w-3.5 h-3.5 text-sky-600" />
                   <span>Route Map</span>
                 </button>
                 <button
-                  onClick={() => handleNavClick('logs-section')}
-                  className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition cursor-pointer"
+                  onClick={() => handleNavClick('results-container', 'logs')}
+                  className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition cursor-pointer ${
+                    activeTab === 'logs' ? 'bg-indigo-50 text-indigo-700 border border-indigo-200' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                  }`}
                 >
                   <FileText className="w-3.5 h-3.5 text-indigo-600" />
                   <span>Daily Logs</span>
                 </button>
                 <button
-                  onClick={() => handleNavClick('timeline-section')}
-                  className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition cursor-pointer"
+                  onClick={() => handleNavClick('results-container', 'timeline')}
+                  className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition cursor-pointer ${
+                    activeTab === 'timeline' ? 'bg-amber-50 text-amber-700 border border-amber-200' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                  }`}
                 >
                   <Compass className="w-3.5 h-3.5 text-amber-600" />
-                  <span>Itinerary</span>
+                  <span>Timeline</span>
                 </button>
                 <button
-                  onClick={() => handleNavClick('compliance-panel-section')}
-                  className="flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-emerald-700 hover:text-emerald-900 hover:bg-emerald-50 transition cursor-pointer"
+                  onClick={() => handleNavClick('results-container', 'directions')}
+                  className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition cursor-pointer ${
+                    activeTab === 'directions' ? 'bg-slate-100 text-slate-900 border border-slate-300' : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                  }`}
+                >
+                  <Route className="w-3.5 h-3.5 text-slate-600" />
+                  <span>Turn-by-Turn</span>
+                </button>
+                <button
+                  onClick={() => handleNavClick('results-container', 'compliance')}
+                  className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold transition cursor-pointer ${
+                    activeTab === 'compliance' ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'text-emerald-700 hover:text-emerald-900 hover:bg-emerald-50'
+                  }`}
                 >
                   <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>Audit</span>
+                  <span>Audit (18)</span>
                 </button>
               </nav>
             )}
@@ -100,53 +118,53 @@ export const Navbar: React.FC<NavbarProps> = ({ hasResults, onScrollTo }) => {
                 <span>Active</span>
               </div>
 
+              {/* Mobile Hamburger Button */}
               {hasResults && (
                 <button
-                  type="button"
                   onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                  className="md:hidden p-2 rounded-xl text-slate-600 hover:bg-slate-100 border border-slate-200 transition cursor-pointer"
-                  aria-label={mobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+                  className="md:hidden p-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition active:scale-95 cursor-pointer"
+                  aria-label="Toggle navigation menu"
                 >
-                  {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+                  {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
                 </button>
               )}
             </div>
           </div>
 
-          {/* Mobile Top Navigation Sheet */}
-          {hasResults && mobileMenuOpen && (
-            <div className="md:hidden py-3 border-t border-slate-200 animate-slide-up">
+          {/* Mobile Dropdown Menu */}
+          {mobileMenuOpen && hasResults && (
+            <div className="md:hidden border-t border-slate-100 py-3 animate-fade-in">
               <div className="grid grid-cols-2 gap-2 text-xs font-semibold">
                 <button
                   onClick={() => handleNavClick('hos-dashboard-section')}
-                  className="flex items-center space-x-2 p-3 rounded-xl bg-slate-50 text-slate-700 hover:bg-slate-100"
+                  className="flex items-center space-x-2 p-3 rounded-xl bg-slate-50 text-slate-700 hover:bg-slate-100 text-left"
                 >
                   <Clock className="w-4 h-4 text-teal-600" />
                   <span>HOS Clocks</span>
                 </button>
                 <button
-                  onClick={() => handleNavClick('map-section')}
-                  className="flex items-center space-x-2 p-3 rounded-xl bg-slate-50 text-slate-700 hover:bg-slate-100"
+                  onClick={() => handleNavClick('results-container', 'map')}
+                  className="flex items-center space-x-2 p-3 rounded-xl bg-slate-50 text-slate-700 hover:bg-slate-100 text-left"
                 >
                   <MapPin className="w-4 h-4 text-sky-600" />
                   <span>Route Map</span>
                 </button>
                 <button
-                  onClick={() => handleNavClick('logs-section')}
-                  className="flex items-center space-x-2 p-3 rounded-xl bg-slate-50 text-slate-700 hover:bg-slate-100"
+                  onClick={() => handleNavClick('results-container', 'logs')}
+                  className="flex items-center space-x-2 p-3 rounded-xl bg-slate-50 text-slate-700 hover:bg-slate-100 text-left"
                 >
                   <FileText className="w-4 h-4 text-indigo-600" />
                   <span>Daily Logs</span>
                 </button>
                 <button
-                  onClick={() => handleNavClick('timeline-section')}
-                  className="flex items-center space-x-2 p-3 rounded-xl bg-slate-50 text-slate-700 hover:bg-slate-100"
+                  onClick={() => handleNavClick('results-container', 'timeline')}
+                  className="flex items-center space-x-2 p-3 rounded-xl bg-slate-50 text-slate-700 hover:bg-slate-100 text-left"
                 >
                   <Compass className="w-4 h-4 text-amber-600" />
                   <span>Itinerary</span>
                 </button>
                 <button
-                  onClick={() => handleNavClick('compliance-panel-section')}
+                  onClick={() => handleNavClick('results-container', 'compliance')}
                   className="col-span-2 flex items-center justify-center space-x-2 p-3 rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-200"
                 >
                   <ShieldCheck className="w-4 h-4 text-emerald-600" />
@@ -158,7 +176,7 @@ export const Navbar: React.FC<NavbarProps> = ({ hasResults, onScrollTo }) => {
         </div>
       </header>
 
-      {/* 2026 Floating Mobile Bottom Dock */}
+      {/* Floating Mobile Bottom Dock */}
       {hasResults && (
         <aside
           aria-label="Mobile Bottom Navigation"
@@ -172,29 +190,37 @@ export const Navbar: React.FC<NavbarProps> = ({ hasResults, onScrollTo }) => {
             <span>HOS</span>
           </button>
           <button
-            onClick={() => onScrollTo('map-section')}
-            className="flex-1 py-1 px-0.5 flex flex-col items-center justify-center text-[10px] font-semibold text-slate-700 hover:text-sky-600 active:scale-95 transition cursor-pointer"
+            onClick={() => onScrollTo('results-container', 'map')}
+            className={`flex-1 py-1 px-0.5 flex flex-col items-center justify-center text-[10px] font-semibold active:scale-95 transition cursor-pointer ${
+              activeTab === 'map' ? 'text-sky-600 font-bold' : 'text-slate-700 hover:text-sky-600'
+            }`}
           >
             <MapPin className="w-4 h-4 text-sky-600 mb-0.5" />
             <span>Map</span>
           </button>
           <button
-            onClick={() => onScrollTo('logs-section')}
-            className="flex-1 py-1 px-0.5 flex flex-col items-center justify-center text-[10px] font-semibold text-slate-700 hover:text-sky-600 active:scale-95 transition cursor-pointer"
+            onClick={() => onScrollTo('results-container', 'logs')}
+            className={`flex-1 py-1 px-0.5 flex flex-col items-center justify-center text-[10px] font-semibold active:scale-95 transition cursor-pointer ${
+              activeTab === 'logs' ? 'text-indigo-600 font-bold' : 'text-slate-700 hover:text-indigo-600'
+            }`}
           >
             <FileText className="w-4 h-4 text-indigo-600 mb-0.5" />
             <span>Logs</span>
           </button>
           <button
-            onClick={() => onScrollTo('timeline-section')}
-            className="flex-1 py-1 px-0.5 flex flex-col items-center justify-center text-[10px] font-semibold text-slate-700 hover:text-sky-600 active:scale-95 transition cursor-pointer"
+            onClick={() => onScrollTo('results-container', 'timeline')}
+            className={`flex-1 py-1 px-0.5 flex flex-col items-center justify-center text-[10px] font-semibold active:scale-95 transition cursor-pointer ${
+              activeTab === 'timeline' ? 'text-amber-600 font-bold' : 'text-slate-700 hover:text-amber-600'
+            }`}
           >
             <Compass className="w-4 h-4 text-amber-600 mb-0.5" />
-            <span>Stops</span>
+            <span>Timeline</span>
           </button>
           <button
-            onClick={() => onScrollTo('compliance-panel-section')}
-            className="flex-1 py-1 px-0.5 flex flex-col items-center justify-center text-[10px] font-semibold text-slate-700 hover:text-emerald-700 active:scale-95 transition cursor-pointer"
+            onClick={() => onScrollTo('results-container', 'compliance')}
+            className={`flex-1 py-1 px-0.5 flex flex-col items-center justify-center text-[10px] font-semibold active:scale-95 transition cursor-pointer ${
+              activeTab === 'compliance' ? 'text-emerald-700 font-bold' : 'text-slate-700 hover:text-emerald-700'
+            }`}
           >
             <ShieldCheck className="w-4 h-4 text-emerald-600 mb-0.5" />
             <span>Audit</span>

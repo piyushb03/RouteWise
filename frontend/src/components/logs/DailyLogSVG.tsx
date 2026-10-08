@@ -470,18 +470,18 @@ export const DailyLogSVG: React.FC<DailyLogSVGProps> = ({ log }) => {
       </svg>
 
       {/* Interactive signature control below SVG in browser view */}
-      <div className="no-print mt-3 pt-3 border-t border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between text-xs text-slate-500 gap-2">
-        <div className="flex items-center space-x-2">
-          <span className="font-semibold text-slate-700">Driver Signature:</span>
+      <div className="no-print mt-3 pt-3 border-t border-slate-200 flex flex-col sm:flex-row items-stretch sm:items-center justify-between text-xs text-slate-500 gap-2.5">
+        <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 w-full sm:w-auto min-w-0">
+          <span className="font-semibold text-slate-700 shrink-0">Driver Signature:</span>
           <input
             type="text"
             placeholder="Driver full name"
             value={typedSignature}
             onChange={(e) => setTypedSignature(e.target.value)}
-            className="px-2.5 py-1 border border-slate-300 rounded text-xs text-slate-900 bg-white focus:outline-none focus:ring-1 focus:ring-slate-900 font-medium"
+            className="flex-1 sm:w-56 min-w-0 max-w-full px-2.5 py-1.5 border border-slate-300 rounded-xl text-xs text-slate-900 bg-white focus:outline-none focus:ring-1 focus:ring-slate-900 font-medium"
           />
         </div>
-        <span className="text-[11px] text-slate-400">
+        <span className="text-[11px] text-slate-400 break-words sm:text-right shrink-0">
           Generated via RouteWise • FMCSA 24h Paper Log Standard Format
         </span>
       </div>

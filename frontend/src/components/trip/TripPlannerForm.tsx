@@ -28,7 +28,7 @@ export const TripPlannerForm: React.FC<TripPlannerFormProps> = ({ onPlanTrip, is
     longitude: -96.797,
     city: 'Dallas',
     state: 'TX',
-    country: 'United States',
+    country: 'US',
   });
 
   const [pickupLoc, setPickupLoc] = useState<Location | null>({
@@ -38,7 +38,7 @@ export const TripPlannerForm: React.FC<TripPlannerFormProps> = ({ onPlanTrip, is
     longitude: -97.1467,
     city: 'Waco',
     state: 'TX',
-    country: 'United States',
+    country: 'US',
   });
 
   const [dropoffLoc, setDropoffLoc] = useState<Location | null>({
@@ -48,7 +48,7 @@ export const TripPlannerForm: React.FC<TripPlannerFormProps> = ({ onPlanTrip, is
     longitude: -87.6298,
     city: 'Chicago',
     state: 'IL',
-    country: 'United States',
+    country: 'US',
   });
 
   const [cycleUsed, setCycleUsed] = useState<number>(15.0);

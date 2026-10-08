@@ -41,6 +41,18 @@ class APITests(APITestCase):
         response = self.client.post("/api/plan-trip/", payload, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
+    def test_plan_trip_accepts_full_country_name(self):
+        payload = {
+            "current_location": {"name": "Dallas, TX", "latitude": 32.78, "longitude": -96.80, "country": "United States"},
+            "pickup_location": {"name": "Waco, TX", "latitude": 31.55, "longitude": -97.15, "country": "United States"},
+            "dropoff_location": {"name": "Chicago, IL", "latitude": 41.88, "longitude": -87.63, "country": "United States"},
+            "cycle_used_hours": 15.0,
+        }
+        # Validate that serializer accepts it without country length error
+        from api.serializers import TripPlanRequestSerializer
+        serializer = TripPlanRequestSerializer(data=payload)
+        self.assertTrue(serializer.is_valid(), serializer.errors)
+
     @patch("services.routing.get_routing_provider")
     def test_plan_trip_success_with_mocked_routing(self, mock_get_router):
         # Setup mock router
