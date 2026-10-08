@@ -47,8 +47,21 @@
 
 5. **18-Point Independent Compliance Audit:**
    - After scheduling, an independent validator audits the timeline to verify zero overlaps, timeline continuity, 11h/14h bounds, 8h break rules, 70h cycle limit, fuel frequency, and exact 24h daily log sums.
-
+   - 
 ---
+
+## Screenshots
+
+<img width="959" height="539" alt="Screenshot 2026-10-08 091801" src="https://github.com/user-attachments/assets/dd84e5d2-543a-4720-a716-5bc8b74a23c3" />
+
+<img width="959" height="539" alt="Screenshot 2026-10-08 091817" src="https://github.com/user-attachments/assets/8f09c5f6-e982-4653-a047-47ac936371f7" />
+
+<img width="959" height="539" alt="Screenshot 2026-10-08 091829" src="https://github.com/user-attachments/assets/e81754b8-389d-4e7f-893f-a6c961afb909" />
+
+<img width="959" height="539" alt="Screenshot 2026-10-08 091922" src="https://github.com/user-attachments/assets/321b37d8-ce83-4afa-990b-b0cb37096034" />
+
+<img width="959" height="539" alt="Screenshot 2026-10-08 091947" src="https://github.com/user-attachments/assets/71523d13-0741-4f7d-abda-ab021c9777e9" />
+
 
 ## 🏗 System Architecture & Tech Stack
 
