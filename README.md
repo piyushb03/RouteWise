@@ -213,14 +213,6 @@ http://localhost:8000
 
 ---
 
-## ☁️ Split Vercel / Cloud Deployment (Optional)
-
-If deploying the frontend separately to **Vercel**:
-1. Configure `VITE_API_BASE_URL` in your Vercel environment settings to point to your deployed Django backend (e.g. `https://api.yourdomain.com`).
-2. Run `npm run build` with output directory `dist`.
-3. In the Django backend, set `CORS_ALLOWED_ORIGINS` to include your Vercel domain.
-
----
 
 ## 🔒 Security Best Practices
 
