@@ -9,7 +9,7 @@
 
 ---
 
-## 🌟 Key Features
+## Key Features
 
 1. **Intelligent Trip Planning:**
    - Input **Current Location**, **Pickup Location** (1 hr On-Duty load), **Dropoff Location** (1 hr On-Duty unload), and **Current Cycle Used** (0–70 hrs).
@@ -50,7 +50,7 @@
    - 
 ---
 
-## Screenshots
+## Screenshots 
 
 <img width="959" height="539" alt="Screenshot 2026-10-08 091801" src="https://github.com/user-attachments/assets/dd84e5d2-543a-4720-a716-5bc8b74a23c3" />
 
